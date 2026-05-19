@@ -5,40 +5,38 @@ description: Create a FastBackend project, generate IR, and start the dev server
 
 # Quick Start
 
-## 1. Build FastBackend (monorepo dev)
+## Published packages (recommended)
 
 ```bash
-cd fastbackend
-pnpm install && pnpm build
+npm install -g @fastbackend/cli
+pip install fastbackend-fastapi
 ```
 
-## 2. Install the Python runtime
+### Create and run a FastAPI project
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -e "packages/fastapi[dev]"
-```
-
-## 3. Create a project
-
-```bash
-alias fb='node packages/cli/dist/index.js'
-
-fb init my-api --schema sqlalchemy --adapter fastapi
+fastbackend init my-api --schema sqlalchemy --adapter fastapi
 cd my-api
 pip install -r requirements.txt
-pip install -e ../packages/fastapi   # local dev until PyPI publish
+cp .env.example .env
+fastbackend generate
+fastbackend dev
 ```
 
-## 4. Generate and run
+Open [http://localhost:8301/docs](http://localhost:8301/docs) for interactive API docs.
+
+### Try the example project
 
 ```bash
-fb generate
-fb dev
+git clone https://github.com/darula-hpp/fastbackend.git
+cd fastbackend/examples/sqlalchemy-fastapi
+pip install -r requirements.txt
+cp .env.example .env
+fastbackend generate
+fastbackend dev
 ```
 
-## 5. Try the API
+## Try the API
 
 ```bash
 curl http://localhost:8301/health
@@ -48,12 +46,33 @@ curl -X POST http://localhost:8301/users \
   -d '{"name":"Alice","email":"alice@example.com"}'
 ```
 
-Open [http://localhost:8301/docs](http://localhost:8301/docs) for interactive API docs.
+## Monorepo development
 
-## Use the Example Project
+If you are contributing to FastBackend itself:
 
 ```bash
-cd fastbackend/examples/sqlalchemy-fastapi
+cd fastbackend
+pnpm install && pnpm build
+alias fb='node packages/cli/dist/index.js'
+
+fb init my-api --schema sqlalchemy --adapter fastapi
+cd my-api
+pip install -r requirements.txt
+pip install -e ../packages/fastapi
 fb generate
 fb dev
 ```
+
+## Express + Prisma
+
+```bash
+fastbackend init my-api --schema prisma --adapter express
+cd my-api
+npm install
+cp .env.example .env
+npx prisma migrate dev
+fastbackend generate
+fastbackend dev
+```
+
+See [Express Runtime Architecture](/docs/core-concepts/express-runtime-architecture) for details.

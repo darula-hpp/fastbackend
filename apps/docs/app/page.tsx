@@ -11,7 +11,7 @@ export default function Home() {
         </h1>
 
         <p className="text-base md:text-lg text-gray-500 dark:text-gray-400 max-w-lg mb-10 leading-relaxed">
-          Point FastBackend at a SQLAlchemy or Prisma schema. Get CRUD routes, relationships, OpenAPI, and custom endpoints. Routes live in memory, not on disk.
+          A backend runtime, not a codegen tool. Point FastBackend at a SQLAlchemy or Prisma schema — it serves CRUD routes, relationships, and OpenAPI at runtime. Routes live in memory, not on disk.
         </p>
 
         <div className="w-full max-w-lg mb-10">
@@ -52,7 +52,7 @@ export default function Home() {
             Read the docs
           </a>
           <a
-            href="https://github.com/darula-hpp/uigen/tree/main/fastbackend"
+            href="https://github.com/darula-hpp/fastbackend"
             target="_blank"
             rel="noopener noreferrer"
             className="px-6 py-2.5 border border-[var(--border)] hover:bg-gray-50 dark:hover:bg-gray-900 rounded-lg font-medium transition-colors text-sm"
@@ -117,7 +117,7 @@ export default function Home() {
         <span>© {new Date().getFullYear()} FastBackend</span>
         <div className="flex gap-4">
           <a
-            href="https://github.com/darula-hpp/uigen/tree/main/fastbackend"
+            href="https://github.com/darula-hpp/fastbackend"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-[var(--primary)] transition-colors"
@@ -146,7 +146,7 @@ const features = [
     ),
     title: 'IR + OpenAPI on disk',
     description:
-      'Generate `.fastbackend/ir.json` and OpenAPI from your schema. No CRUD route code is written to disk.',
+      'The CLI writes `.fastbackend/ir.json` and OpenAPI from your schema. No CRUD route code is written to disk.',
   },
   {
     icon: () => (
@@ -157,7 +157,7 @@ const features = [
     ),
     title: 'Runtime routes',
     description:
-      'FastAPI adapter registers CRUD, relationships, and Pydantic validation at startup from IR.',
+      'FastAPI and Express adapters register CRUD, relationships, and validation at startup from IR.',
   },
   {
     icon: () => (
@@ -191,12 +191,13 @@ const features = [
   {
     icon: () => (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="w-full h-full">
-        <circle cx="12" cy="12" r="4" />
-        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+        <rect x="2" y="3" width="20" height="14" rx="2" />
+        <path d="M8 21h8M12 17v4" />
       </svg>
     ),
-    title: 'Dark / light theme',
-    description: 'Built-in toggle with system preference detection, same as UIGen docs.',
+    title: 'Frontend integration',
+    description:
+      'OpenAPI output works with Orval, openapi-typescript, Hey API, or UIGen. Any frontend stack can consume the spec.',
   },
   {
     icon: () => (
@@ -219,6 +220,7 @@ const roadmap = [
   { label: 'Custom endpoints + overrides', done: true },
   { label: 'Docs site', done: true },
   { label: 'Express runtime (Prisma)', done: true },
-  { label: 'npm / PyPI publish', done: false },
+  { label: 'npm / PyPI publish', done: true },
+  { label: 'Declarative services (storage, OAuth)', done: false },
   { label: 'Spring adapter', done: false },
 ];

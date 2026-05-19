@@ -43,14 +43,14 @@ export function SiteHeader({ variant }: SiteHeaderProps) {
             </a>
           )}
           <a
-            href="https://github.com/darula-hpp/uigen/tree/main/fastbackend"
+            href="https://github.com/darula-hpp/fastbackend"
             target="_blank"
             rel="noopener noreferrer"
             className="hidden sm:inline text-sm text-gray-500 dark:text-gray-400 hover:text-[var(--primary)] transition-colors"
           >
             GitHub →
           </a>
-          <ThemeToggle />
+          {variant === 'docs' && <ThemeToggle />}
         </div>
       </div>
     </header>
