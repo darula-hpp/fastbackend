@@ -28,12 +28,13 @@ coverage/
 .coverage
 htmlcov/
 
-# Environment
+# Environment (applies to examples/ too; examples/.gitignore has more detail)
 .env
 .env.local
+!.env.example
 
-# Generated files
-.fastbackend/
+# Generated files (per-project .fastbackend/ dirs, including examples)
+**/.fastbackend/
 
 # Docs site (npm, not pnpm workspace)
 apps/docs/node_modules/

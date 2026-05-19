@@ -144,6 +144,10 @@ class TestRuntime:
         assert health.status_code == 200
         assert health.json()["status"] == "healthy"
 
+        root = client.get("/")
+        assert root.status_code == 200
+        assert root.json()["endpoints"]["resources"] == ["/users"]
+
     def test_crud_endpoints(self, ir_file, tmp_path):
         custom_path = tmp_path / "custom"
         custom_path.mkdir()

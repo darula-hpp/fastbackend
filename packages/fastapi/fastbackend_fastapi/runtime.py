@@ -15,6 +15,7 @@ from fastbackend_fastapi.crud_engine import CRUDEngine
 from fastbackend_fastapi.relationship_engine import RelationshipEngine
 from fastbackend_fastapi.utils.ir_loader import load_ir
 from fastbackend_fastapi.utils.route_registry import RouteRegistry
+from fastbackend_fastapi.utils.pluralize import pluralize
 from fastbackend_fastapi.validation_engine import ValidationEngine
 
 
@@ -51,6 +52,7 @@ class Runtime:
             )
 
             self._scan_overrides()
+            self._register_root_route(ir)
             self._register_health_check()
             self._create_models(ir["entities"])
 
@@ -74,6 +76,26 @@ class Runtime:
     def _create_models(self, entities: list[dict[str, Any]]) -> None:
         for entity in entities:
             self.validation_engine.create_models(entity)
+
+    def _register_root_route(self, ir: dict[str, Any]) -> None:
+        assert self.app is not None
+        metadata = ir["metadata"]
+        resources = [f"/{pluralize(entity['name'])}" for entity in ir["entities"]]
+
+        async def root() -> dict[str, Any]:
+            return {
+                "name": metadata["projectName"],
+                "adapter": metadata["adapter"],
+                "schemaFormat": metadata["schemaFormat"],
+                "message": "FastBackend API is running. Use the resource paths below.",
+                "endpoints": {
+                    "health": "/health",
+                    "resources": resources,
+                },
+            }
+
+        self.app.add_api_route("/", root, methods=["GET"], tags=["Meta"])
+        self.registry.register("/", ["GET"])
 
     def _register_health_check(self) -> None:
         assert self.app is not None

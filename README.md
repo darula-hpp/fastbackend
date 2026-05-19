@@ -125,9 +125,9 @@ Published on npm (public):
 - [`@fastbackend/cli`](https://www.npmjs.com/package/@fastbackend/cli) - Command-line interface
 - [`@fastbackend/express`](https://www.npmjs.com/package/@fastbackend/express) - Express + Prisma runtime adapter
 
-Python adapter (PyPI):
+Python adapter ([PyPI](https://pypi.org/project/fastbackend-fastapi/)):
 
-- `fastbackend-fastapi` - FastAPI runtime adapter
+- [`fastbackend-fastapi`](https://pypi.org/project/fastbackend-fastapi/) - FastAPI runtime adapter
 
 ## Testing
 
@@ -135,29 +135,7 @@ Python adapter (PyPI):
 pnpm test                  # TypeScript unit + E2E tests
 pnpm test:coverage:python  # FastAPI adapter coverage (75% threshold)
 pnpm test:integration:docker  # Docker build + /health (requires Docker)
-pnpm test:all              # Run all of the above (use before release)
-```
-
-## Publishing
-
-TypeScript packages use [Changesets](https://github.com/changesets/changesets):
-
-```bash
-pnpm changeset          # describe changes
-pnpm run version        # bump versions and update changelogs
-pnpm release            # build and publish to npm
-
-# npm 2FA enabled:
-pnpm release -- --otp=123456
-```
-
-All `@fastbackend/*` scoped packages publish with public access.
-
-Before publishing, verify tarball contents:
-
-```bash
-pnpm --filter @fastbackend/core build
-pnpm --filter @fastbackend/core pack
+pnpm test:all              # Run all of the above
 ```
 
 ## Documentation
@@ -167,8 +145,55 @@ pnpm --filter @fastbackend/core pack
 
 ## Examples
 
-| Example | Adapter | Schema |
-|---------|---------|--------|
-| [sqlalchemy-fastapi](./examples/sqlalchemy-fastapi/) | FastAPI | SQLAlchemy |
-| [prisma-fastapi](./examples/prisma-fastapi/) | FastAPI | Prisma |
-| [prisma-express](./examples/prisma-express/) | Express | Prisma |
+| Example | Adapter | Schema | Port |
+|---------|---------|--------|------|
+| [sqlalchemy-fastapi](./examples/sqlalchemy-fastapi/) | FastAPI | SQLAlchemy | 8000 |
+| [prisma-fastapi](./examples/prisma-fastapi/) | FastAPI | Prisma | 8000 |
+| [prisma-express](./examples/prisma-express/) | Express | Prisma | 3001 |
+
+Each example has its own README with endpoints, overrides, and tests. From the repo root, build the CLI once:
+
+```bash
+cd fastbackend
+pnpm install && pnpm build
+```
+
+Use `node packages/cli/dist/index.js` instead of `fastbackend` below if you have not installed the CLI globally.
+
+### Run the FastAPI example (Python)
+
+```bash
+cd fastbackend/examples/sqlalchemy-fastapi
+pip install -r requirements.txt
+cp .env.example .env
+fastbackend generate
+fastbackend dev
+```
+
+Open http://localhost:8000/ for the API overview. See [examples/sqlalchemy-fastapi/README.md](./examples/sqlalchemy-fastapi/README.md) for custom endpoints, overrides, and tests.
+
+### Run the Express example (TypeScript + Prisma)
+
+Requires PostgreSQL. Start a local database (Docker example):
+
+```bash
+docker run -d --name fb-prisma-express \
+  -e POSTGRES_PASSWORD=postgres \
+  -e POSTGRES_DB=prisma_express \
+  -p 5432:5432 postgres:16
+```
+
+Then run the app:
+
+```bash
+cd fastbackend/examples/prisma-express
+npm install
+cp .env.example .env
+npx prisma migrate dev
+fastbackend generate
+fastbackend dev
+```
+
+Open http://localhost:3001/ for the API overview. See [examples/prisma-express/README.md](./examples/prisma-express/README.md) for details.
+
+The CLI loads `.env` automatically for `dev`, `generate`, `migrate`, and `test`. Copy from `.env.example` once per project; see each example README for the variables it uses.
