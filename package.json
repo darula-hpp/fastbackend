@@ -23,7 +23,7 @@
     "lint:fix": "pnpm -r lint:fix",
     "changeset": "changeset",
     "version": "changeset version",
-    "release": "pnpm build && changeset publish"
+    "publish": "pnpm build && changeset publish"
   },
   "devDependencies": {
     "@changesets/cli": "^2.30.0",

@@ -37,7 +37,7 @@ export default function Home() {
                 <span className="text-white">generate && fastbackend dev</span>
                 {'\n'}
                 <span className="text-gray-500">
-                  # → Your API is live at http://localhost:8000/docs
+                  # → Your API is live at http://localhost:8301/docs
                 </span>
               </code>
             </pre>

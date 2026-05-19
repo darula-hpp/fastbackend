@@ -10,8 +10,8 @@ pnpm changeset
 pnpm run version
 
 # 3. Build and publish to npm
-pnpm release
+pnpm run publish
 
 # If npm 2FA is enabled, pass a one-time password:
-pnpm release -- --otp=123456
+pnpm run publish -- --otp=123456
 ```

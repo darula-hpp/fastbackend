@@ -439,7 +439,7 @@ export class OpenAPIGenerator {
         version: config.version ?? ir.metadata.schemaVersion,
         description: `Auto-generated OpenAPI spec for ${ir.metadata.projectName}`,
       },
-      servers: config.servers ?? [{ url: 'http://localhost:8000', description: 'Development server' }],
+      servers: config.servers ?? [{ url: 'http://localhost:8301', description: 'Development server' }],
       paths,
       components: {
         schemas: this.schemaBuilder.buildAllSchemas(ir),

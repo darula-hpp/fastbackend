@@ -16,14 +16,14 @@ fastbackend dev [options]
 | Flag | Default | Description |
 |------|---------|-------------|
 | `--watch` | from config | Watch schema and config for changes |
-| `--port <port>` | `8000` | Server port |
+| `--port <port>` | `8301` | Server port |
 | `--debug` | off | Verbose logging |
 
 ## Example
 
 ```bash
 fastbackend dev
-fastbackend dev --watch --port 8000
+fastbackend dev --watch --port 8301
 ```
 
 Uses uvicorn with hot reload when `development.hotReload` is enabled in config.

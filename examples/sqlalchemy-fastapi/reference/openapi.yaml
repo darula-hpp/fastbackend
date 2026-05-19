@@ -4,7 +4,7 @@ info:
   version: 1.0.0
   description: Auto-generated OpenAPI spec for sqlalchemy-fastapi
 servers:
-  - url: http://localhost:8000
+  - url: http://localhost:8301
     description: Development server
 paths:
   /health:
@@ -390,6 +390,15 @@ paths:
       tags:
         - Custom
       summary: Custom GET /health/custom
+      responses:
+        '200':
+          description: Successful response
+  /users/{user_id}:
+    get:
+      tags:
+        - Custom
+      summary: Custom retrieve handler; the runtime skips its default GET /users/{id}.
+      description: Custom retrieve handler; the runtime skips its default GET /users/{id}.
       responses:
         '200':
           description: Successful response

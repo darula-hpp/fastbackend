@@ -4,7 +4,7 @@ const FASTAPI_ADAPTER: RuntimeAdapterDefinition = {
   name: 'fastapi',
   language: 'python',
   supportedSchemaFormats: ['sqlalchemy', 'prisma'],
-  defaultPort: 8000,
+  defaultPort: 8301,
   customPath: 'app/custom',
   getDevCommand: ({ port, hotReload }) => ({
     command: 'python3',
@@ -12,6 +12,11 @@ const FASTAPI_ADAPTER: RuntimeAdapterDefinition = {
       ? ['-m', 'uvicorn', 'main:app', '--reload', '--port', String(port)]
       : ['-m', 'uvicorn', 'main:app', '--port', String(port)],
   }),
+  getDevUrls: (port) => [
+    { label: 'API', url: `http://localhost:${port}/` },
+    { label: 'Documentation', url: `http://localhost:${port}/docs` },
+    { label: 'ReDoc', url: `http://localhost:${port}/redoc` },
+  ],
   getTestCommand: () => ({
     command: 'python3',
     args: ['-m', 'pytest', 'tests/', '-v'],

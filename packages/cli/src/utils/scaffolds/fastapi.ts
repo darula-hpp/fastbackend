@@ -71,11 +71,11 @@ pytest>=8.0.0
 httpx>=0.27.0
 `;
 
-const ENV_EXAMPLE_SQLALCHEMY = `PORT=8000
+const ENV_EXAMPLE_SQLALCHEMY = `PORT=8301
 `;
 
 const ENV_EXAMPLE_PRISMA = `DATABASE_URL=postgresql://postgres:postgres@localhost:5432/{{name}}
-PORT=8000
+PORT=8301
 `;
 
 const USERS_OVERRIDE_PY = `"""Override example: replace the generated GET /users/{id} route."""

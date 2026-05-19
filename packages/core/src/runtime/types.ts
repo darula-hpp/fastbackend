@@ -17,6 +17,11 @@ export interface ProcessCommand {
   args: string[];
 }
 
+export interface DevUrl {
+  label: string;
+  url: string;
+}
+
 export interface RuntimeAdapterDefinition {
   name: RuntimeAdapterName;
   language: RuntimeLanguage;
@@ -24,6 +29,7 @@ export interface RuntimeAdapterDefinition {
   defaultPort: number;
   customPath: string;
   getDevCommand: (options: DevServerOptions) => ProcessCommand;
+  getDevUrls?: (port: number) => DevUrl[];
   getTestCommand: (cwd: string) => ProcessCommand;
   getMigrateCommand: () => ProcessCommand;
 }

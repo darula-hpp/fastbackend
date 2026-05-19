@@ -24,4 +24,17 @@ describe('runtime adapters', () => {
   it('allows express with prisma', () => {
     expect(() => validateAdapterSchemaPair('express', 'prisma')).not.toThrow();
   });
+
+  it('exposes FastAPI documentation URLs for dev output', () => {
+    const adapter = getRuntimeAdapter('fastapi');
+    expect(adapter.getDevUrls?.(8301)).toEqual([
+      { label: 'API', url: 'http://localhost:8301/' },
+      { label: 'Documentation', url: 'http://localhost:8301/docs' },
+      { label: 'ReDoc', url: 'http://localhost:8301/redoc' },
+    ]);
+  });
+
+  it('does not define dev URLs for Express', () => {
+    expect(getRuntimeAdapter('express').getDevUrls).toBeUndefined();
+  });
 });

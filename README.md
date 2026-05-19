@@ -147,8 +147,8 @@ pnpm test:all              # Run all of the above
 
 | Example | Adapter | Schema | Port |
 |---------|---------|--------|------|
-| [sqlalchemy-fastapi](./examples/sqlalchemy-fastapi/) | FastAPI | SQLAlchemy | 8000 |
-| [prisma-fastapi](./examples/prisma-fastapi/) | FastAPI | Prisma | 8000 |
+| [sqlalchemy-fastapi](./examples/sqlalchemy-fastapi/) | FastAPI | SQLAlchemy | 8301 |
+| [prisma-fastapi](./examples/prisma-fastapi/) | FastAPI | Prisma | 8301 |
 | [prisma-express](./examples/prisma-express/) | Express | Prisma | 3001 |
 
 Each example has its own README with endpoints, overrides, and tests. From the repo root, build the CLI once:
@@ -170,7 +170,7 @@ fastbackend generate
 fastbackend dev
 ```
 
-Open http://localhost:8000/ for the API overview. See [examples/sqlalchemy-fastapi/README.md](./examples/sqlalchemy-fastapi/README.md) for custom endpoints, overrides, and tests.
+Open http://localhost:8301/ for the API overview. See [examples/sqlalchemy-fastapi/README.md](./examples/sqlalchemy-fastapi/README.md) for custom endpoints, overrides, and tests.
 
 ### Run the Express example (TypeScript + Prisma)
 

@@ -26,13 +26,13 @@ Copy `.env.example` to `.env`. The CLI loads it automatically for `dev`, `genera
 
 | Variable | Default | Used by |
 |----------|---------|---------|
-| `PORT` | `8000` | Optional server port (also set in `fastbackend.yaml`) |
+| `PORT` | `8301` | Optional server port (also set in `fastbackend.yaml`) |
 
 ## Usage
 
 ```bash
 fastbackend generate   # schema -> IR + OpenAPI on disk
-fastbackend dev        # start FastAPI runtime (port 8000)
+fastbackend dev        # start FastAPI runtime (port 8301)
 ```
 
 ## API Endpoints
@@ -51,9 +51,9 @@ fastbackend dev        # start FastAPI runtime (port 8000)
 Try it:
 
 ```bash
-curl http://localhost:8000/
-curl http://localhost:8000/health
-curl http://localhost:8000/users/1
+curl http://localhost:8301/
+curl http://localhost:8301/health
+curl http://localhost:8301/users/1
 ```
 
 Expected override response:

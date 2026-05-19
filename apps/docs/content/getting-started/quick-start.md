@@ -41,14 +41,14 @@ fb dev
 ## 5. Try the API
 
 ```bash
-curl http://localhost:8000/health
-curl http://localhost:8000/users
-curl -X POST http://localhost:8000/users \
+curl http://localhost:8301/health
+curl http://localhost:8301/users
+curl -X POST http://localhost:8301/users \
   -H "Content-Type: application/json" \
   -d '{"name":"Alice","email":"alice@example.com"}'
 ```
 
-Open [http://localhost:8000/docs](http://localhost:8000/docs) for interactive API docs.
+Open [http://localhost:8301/docs](http://localhost:8301/docs) for interactive API docs.
 
 ## Use the Example Project
 

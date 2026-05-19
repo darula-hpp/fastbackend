@@ -4,7 +4,7 @@ import { getRuntimeAdapter } from '@fastbackend/core';
 describe('runtime adapter CLI commands', () => {
   it('returns FastAPI dev and test commands', () => {
     const adapter = getRuntimeAdapter('fastapi');
-    expect(adapter.getDevCommand({ cwd: '/tmp', port: 8000, hotReload: true }).command).toBe('python3');
+    expect(adapter.getDevCommand({ cwd: '/tmp', port: 8301, hotReload: true }).command).toBe('python3');
     expect(adapter.getTestCommand('/tmp').args).toContain('pytest');
     expect(adapter.getMigrateCommand().command).toBe('alembic');
   });
@@ -19,7 +19,7 @@ describe('runtime adapter CLI commands', () => {
   });
 
   it('uses adapter-specific defaults', () => {
-    expect(getRuntimeAdapter('fastapi').defaultPort).toBe(8000);
+    expect(getRuntimeAdapter('fastapi').defaultPort).toBe(8301);
     expect(getRuntimeAdapter('express').defaultPort).toBe(3000);
     expect(getRuntimeAdapter('express').customPath).toBe('src/custom');
   });

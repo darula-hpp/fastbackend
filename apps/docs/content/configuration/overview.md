@@ -31,14 +31,14 @@ openapi:
   title: My API
   version: 1.0.0
   servers:
-    - url: http://localhost:8000
+    - url: http://localhost:8301
       description: Development
   annotations:
     relationships: true
 
 development:
   watch: true
-  port: 8000
+  port: 8301
   hotReload: true
 ```
 

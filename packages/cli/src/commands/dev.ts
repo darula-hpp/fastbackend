@@ -49,6 +49,10 @@ export async function devCommand(options: DevOptions = {}): Promise<void> {
 
   logger.info(`Starting ${runtimeAdapter.name} runtime on port ${port}...`);
 
+  for (const { label, url } of runtimeAdapter.getDevUrls?.(port) ?? []) {
+    logger.info(`${label}: ${url}`);
+  }
+
   const hotReload = config.development?.hotReload ?? true;
   await startAdapterServer(runtimeAdapter.name, { cwd, port, hotReload });
 }
