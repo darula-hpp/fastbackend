@@ -1,0 +1,40 @@
+{
+  "name": "fastbackend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Schema-driven backend runtime framework",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/darula-hpp/uigen.git",
+    "directory": "fastbackend"
+  },
+  "scripts": {
+    "build": "pnpm -r build",
+    "dev": "pnpm --filter @fastbackend/cli dev",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:coverage:python": "cd packages/fastapi && python3 -m pytest tests/ --cov=fastbackend_fastapi --cov-report=term-missing --cov-fail-under=75",
+    "test:integration:docker": "vitest run --config vitest.integration.config.ts",
+    "test:all": "pnpm test && pnpm test:coverage:python && pnpm test:integration:docker",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "pnpm -r lint",
+    "lint:fix": "pnpm -r lint:fix",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "release": "pnpm build && changeset publish"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.30.0",
+    "@types/node": "^22.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "@vitest/coverage-v8": "^2.1.9",
+    "@vitest/ui": "^2.0.0",
+    "eslint": "^9.0.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.0.0"
+  },
+  "packageManager": "pnpm@9.0.0"
+}

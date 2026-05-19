@@ -1,0 +1,55 @@
+{
+  "name": "@fastbackend/cli",
+  "version": "0.1.0",
+  "description": "CLI tool for FastBackend framework",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/darula-hpp/uigen.git",
+    "directory": "fastbackend/packages/cli"
+  },
+  "homepage": "https://github.com/darula-hpp/uigen/tree/main/fastbackend/packages/cli",
+  "bugs": {
+    "url": "https://github.com/darula-hpp/uigen/issues"
+  },
+  "type": "module",
+  "bin": {
+    "fastbackend": "./dist/index.js"
+  },
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts",
+    "!dist/**/__tests__/**",
+    "!dist/**/*.test.js",
+    "!dist/**/*.test.d.ts"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "pnpm run build",
+    "dev": "tsc --watch",
+    "test": "vitest",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix"
+  },
+  "dependencies": {
+    "@fastbackend/core": "workspace:*",
+    "commander": "^12.0.0",
+    "chalk": "^5.3.0",
+    "ora": "^8.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "vitest": "^2.0.0",
+    "typescript": "^5.6.0"
+  },
+  "keywords": [
+    "fastbackend",
+    "cli",
+    "backend-framework",
+    "code-generator"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

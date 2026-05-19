@@ -1,0 +1,161 @@
+{
+  "version": "1.0.0",
+  "metadata": {
+    "projectName": "sqlalchemy-fastapi",
+    "schemaFormat": "sqlalchemy",
+    "adapter": "fastapi",
+    "generatedAt": "2026-01-01T00:00:00.000Z",
+    "schemaVersion": "1.0.0"
+  },
+  "entities": [
+    {
+      "name": "Post",
+      "tableName": "posts",
+      "fields": [
+        {
+          "name": "id",
+          "type": {
+            "base": "integer"
+          },
+          "nullable": false,
+          "defaultValue": null,
+          "validation": [
+            {
+              "type": "required"
+            }
+          ],
+          "metadata": {}
+        },
+        {
+          "name": "title",
+          "type": {
+            "base": "string"
+          },
+          "nullable": false,
+          "defaultValue": null,
+          "validation": [
+            {
+              "type": "required"
+            }
+          ],
+          "metadata": {}
+        },
+        {
+          "name": "content",
+          "type": {
+            "base": "string"
+          },
+          "nullable": true,
+          "defaultValue": null,
+          "validation": [],
+          "metadata": {}
+        },
+        {
+          "name": "user_id",
+          "type": {
+            "base": "integer"
+          },
+          "nullable": false,
+          "defaultValue": null,
+          "validation": [
+            {
+              "type": "required"
+            }
+          ],
+          "metadata": {}
+        }
+      ],
+      "primaryKey": [
+        "id"
+      ],
+      "uniqueConstraints": [],
+      "indexes": [],
+      "metadata": {}
+    },
+    {
+      "name": "User",
+      "tableName": "users",
+      "fields": [
+        {
+          "name": "id",
+          "type": {
+            "base": "integer"
+          },
+          "nullable": false,
+          "defaultValue": null,
+          "validation": [
+            {
+              "type": "required"
+            }
+          ],
+          "metadata": {}
+        },
+        {
+          "name": "name",
+          "type": {
+            "base": "string"
+          },
+          "nullable": false,
+          "defaultValue": null,
+          "validation": [
+            {
+              "type": "required"
+            }
+          ],
+          "metadata": {}
+        },
+        {
+          "name": "email",
+          "type": {
+            "base": "string"
+          },
+          "nullable": false,
+          "defaultValue": null,
+          "validation": [
+            {
+              "type": "required"
+            }
+          ],
+          "metadata": {}
+        }
+      ],
+      "primaryKey": [
+        "id"
+      ],
+      "uniqueConstraints": [
+        [
+          "email"
+        ]
+      ],
+      "indexes": [],
+      "metadata": {}
+    }
+  ],
+  "relationships": [
+    {
+      "name": "author",
+      "type": "many-to-one",
+      "sourceEntity": "Post",
+      "targetEntity": "User",
+      "sourceField": "user_id",
+      "targetField": "id",
+      "cascadeDelete": false,
+      "metadata": {
+        "backPopulates": "posts"
+      }
+    },
+    {
+      "name": "posts",
+      "type": "one-to-many",
+      "sourceEntity": "User",
+      "targetEntity": "Post",
+      "sourceField": "id",
+      "targetField": "user_id",
+      "cascadeDelete": false,
+      "metadata": {
+        "backPopulates": "author"
+      }
+    }
+  ],
+  "enums": []
+}

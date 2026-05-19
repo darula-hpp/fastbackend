@@ -1,0 +1,462 @@
+openapi: 3.1.0
+info:
+  title: sqlalchemy-fastapi
+  version: 1.0.0
+  description: Auto-generated OpenAPI spec for sqlalchemy-fastapi
+servers:
+  - url: http://localhost:8000
+    description: Development server
+paths:
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Health check
+      operationId: healthCheck
+      responses:
+        '200':
+          description: Application is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                      - healthy
+                      - unhealthy
+                  database:
+                    type: string
+        '503':
+          description: Application is unhealthy
+  /posts:
+    get:
+      tags:
+        - Post
+      summary: List Post records
+      operationId: listPost
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+          description: Maximum number of items to return
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+          description: Number of items to skip
+        - name: sort
+          in: query
+          schema:
+            type: string
+          description: Sort field and direction (e.g., created_at:desc)
+        - name: q
+          in: query
+          schema:
+            type: string
+          description: Search query for text fields
+        - name: id
+          in: query
+          schema:
+            type: integer
+          description: Filter by id
+        - name: title
+          in: query
+          schema:
+            type: string
+          description: Filter by title
+        - name: content
+          in: query
+          schema:
+            type: string
+            nullable: true
+          description: Filter by content
+        - name: user_id
+          in: query
+          schema:
+            type: integer
+          description: Filter by user_id
+      responses:
+        '200':
+          description: List of Post records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+    post:
+      tags:
+        - Post
+      summary: Create Post
+      operationId: createPost
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostCreate'
+      responses:
+        '201':
+          description: Created Post
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+  /posts/{id}:
+    get:
+      tags:
+        - Post
+      summary: Get Post by ID
+      operationId: getPost
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Post record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '404':
+          description: Not found
+    put:
+      tags:
+        - Post
+      summary: Update Post
+      operationId: updatePost
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostUpdate'
+      responses:
+        '200':
+          description: Updated Post
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '404':
+          description: Not found
+    delete:
+      tags:
+        - Post
+      summary: Delete Post
+      operationId: deletePost
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Deleted
+        '404':
+          description: Not found
+  /users:
+    get:
+      tags:
+        - User
+      summary: List User records
+      operationId: listUser
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+          description: Maximum number of items to return
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+          description: Number of items to skip
+        - name: sort
+          in: query
+          schema:
+            type: string
+          description: Sort field and direction (e.g., created_at:desc)
+        - name: q
+          in: query
+          schema:
+            type: string
+          description: Search query for text fields
+        - name: id
+          in: query
+          schema:
+            type: integer
+          description: Filter by id
+        - name: name
+          in: query
+          schema:
+            type: string
+          description: Filter by name
+        - name: email
+          in: query
+          schema:
+            type: string
+          description: Filter by email
+      responses:
+        '200':
+          description: List of User records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+    post:
+      tags:
+        - User
+      summary: Create User
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+      responses:
+        '201':
+          description: Created User
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /users/{id}:
+    get:
+      tags:
+        - User
+      summary: Get User by ID
+      operationId: getUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: Not found
+    put:
+      tags:
+        - User
+      summary: Update User
+      operationId: updateUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+      responses:
+        '200':
+          description: Updated User
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: Not found
+    delete:
+      tags:
+        - User
+      summary: Delete User
+      operationId: deleteUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Deleted
+        '404':
+          description: Not found
+  /posts/{id}/author:
+    get:
+      tags:
+        - Post
+      summary: Get author for Post
+      operationId: getPostauthor
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Related User records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+      x-uigen-relationship:
+        type: many-to-one
+        sourceEntity: Post
+        targetEntity: User
+        name: author
+        backPopulates: posts
+  /users/{id}/posts:
+    get:
+      tags:
+        - User
+      summary: Get posts for User
+      operationId: getUserposts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Related Post records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+      x-uigen-relationship:
+        type: one-to-many
+        sourceEntity: User
+        targetEntity: Post
+        name: posts
+        backPopulates: author
+  /users/{user_id}/send-email:
+    post:
+      tags:
+        - Custom
+      summary: Send a notification email to the user.
+      description: Send a notification email to the user.
+      responses:
+        '200':
+          description: Successful response
+  /health/custom:
+    get:
+      tags:
+        - Custom
+      summary: Custom GET /health/custom
+      responses:
+        '200':
+          description: Successful response
+components:
+  schemas:
+    Post:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        content:
+          type: string
+          nullable: true
+        user_id:
+          type: integer
+    PostCreate:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+          nullable: true
+        user_id:
+          type: integer
+      required:
+        - title
+        - user_id
+    PostUpdate:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        content:
+          type: string
+          nullable: true
+        user_id:
+          type: integer
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+    UserCreate:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+      required:
+        - name
+        - email
+    UserUpdate:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string

@@ -1,0 +1,56 @@
+name: FastBackend CI
+
+on:
+  push:
+    paths:
+      - 'fastbackend/**'
+  pull_request:
+    paths:
+      - 'fastbackend/**'
+
+defaults:
+  run:
+    working-directory: fastbackend
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: fastbackend/pnpm-lock.yaml
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Node dependencies
+        run: pnpm install
+
+      - name: Build packages
+        run: pnpm build
+
+      - name: Install Python runtime adapter
+        run: pip install -e "packages/fastapi[dev]"
+
+      - name: Run TypeScript tests
+        run: pnpm test
+
+      - name: Run Python tests
+        run: pnpm test:coverage:python
+
+      - name: Run Docker integration tests
+        run: pnpm test:integration:docker

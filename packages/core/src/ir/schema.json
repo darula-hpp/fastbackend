@@ -1,0 +1,167 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://fastbackend.dev/schemas/ir.json",
+  "title": "FastBackend IR",
+  "description": "Intermediate Representation schema for FastBackend",
+  "type": "object",
+  "required": ["version", "metadata", "entities", "relationships", "enums"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "metadata": {
+      "type": "object",
+      "required": ["projectName", "schemaFormat", "adapter", "generatedAt", "schemaVersion"],
+      "additionalProperties": false,
+      "properties": {
+        "projectName": { "type": "string", "minLength": 1 },
+        "schemaFormat": { "type": "string", "minLength": 1 },
+        "adapter": { "type": "string", "minLength": 1 },
+        "generatedAt": { "type": "string", "format": "date-time" },
+        "schemaVersion": { "type": "string" }
+      }
+    },
+    "entities": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/entity" }
+    },
+    "relationships": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/relationship" }
+    },
+    "enums": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/enum" }
+    }
+  },
+  "definitions": {
+    "fieldType": {
+      "type": "object",
+      "required": ["base"],
+      "additionalProperties": false,
+      "properties": {
+        "base": { "type": "string" },
+        "format": { "type": "string" },
+        "enumRef": { "type": "string" },
+        "arrayOf": { "$ref": "#/definitions/fieldType" },
+        "min": { "type": "number" },
+        "max": { "type": "number" },
+        "pattern": { "type": "string" }
+      }
+    },
+    "validationRule": {
+      "type": "object",
+      "required": ["type"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["required", "min", "max", "minLength", "maxLength", "pattern", "email", "url", "uuid", "custom"]
+        },
+        "value": {},
+        "message": { "type": "string" }
+      }
+    },
+    "field": {
+      "type": "object",
+      "required": ["name", "type", "nullable", "validation", "metadata"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "type": { "$ref": "#/definitions/fieldType" },
+        "nullable": { "type": "boolean" },
+        "defaultValue": {},
+        "validation": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/validationRule" }
+        },
+        "metadata": { "type": "object" }
+      }
+    },
+    "entity": {
+      "type": "object",
+      "required": ["name", "tableName", "fields", "primaryKey", "uniqueConstraints", "indexes", "metadata"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "tableName": { "type": "string", "minLength": 1 },
+        "fields": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/field" },
+          "minItems": 1
+        },
+        "primaryKey": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        },
+        "uniqueConstraints": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "indexes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "fields"],
+            "properties": {
+              "name": { "type": "string" },
+              "fields": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "unique": { "type": "boolean" }
+            }
+          }
+        },
+        "metadata": { "type": "object" }
+      }
+    },
+    "relationship": {
+      "type": "object",
+      "required": ["name", "type", "sourceEntity", "targetEntity", "cascadeDelete", "metadata"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "type": {
+          "type": "string",
+          "enum": ["one-to-one", "one-to-many", "many-to-one", "many-to-many"]
+        },
+        "sourceEntity": { "type": "string", "minLength": 1 },
+        "targetEntity": { "type": "string", "minLength": 1 },
+        "sourceField": { "type": "string" },
+        "targetField": { "type": "string" },
+        "joinTable": { "type": "string" },
+        "cascadeDelete": { "type": "boolean" },
+        "metadata": { "type": "object" }
+      }
+    },
+    "enum": {
+      "type": "object",
+      "required": ["name", "values", "metadata"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "values": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "value"],
+            "properties": {
+              "name": { "type": "string" },
+              "value": {},
+              "description": { "type": "string" }
+            }
+          },
+          "minItems": 1
+        },
+        "metadata": { "type": "object" }
+      }
+    }
+  }
+}

@@ -1,0 +1,27 @@
+project:
+  name: sqlalchemy-fastapi
+  version: 1.0.0
+  description: SQLAlchemy + FastAPI example for FastBackend
+
+schema:
+  format: sqlalchemy
+  path: models.py
+
+adapter:
+  name: fastapi
+  customPath: app/custom
+
+openapi:
+  outputPath: .fastbackend/openapi.yaml
+  title: sqlalchemy-fastapi
+  version: 1.0.0
+  servers:
+    - url: http://localhost:8000
+      description: Development server
+  annotations:
+    relationships: true
+
+development:
+  watch: true
+  port: 8000
+  hotReload: true
