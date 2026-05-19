@@ -34,3 +34,7 @@ htmlcov/
 
 # Generated files
 .fastbackend/
+
+# Docs site (npm, not pnpm workspace)
+apps/docs/node_modules/
+apps/docs/.next/

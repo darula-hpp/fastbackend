@@ -113,4 +113,30 @@ describe('scaffoldProject', () => {
     expect(config).toContain('format: prisma');
     expect(config).toContain('path: schema.prisma');
   });
+
+  it('should scaffold an Express + Prisma project', () => {
+    const created = scaffoldProject(tempDir, {
+      name: 'express-api',
+      schema: 'prisma',
+      adapter: 'express',
+    });
+
+    expect(created).toContain('src/main.ts');
+    expect(existsSync(join(tempDir, 'package.json'))).toBe(true);
+    expect(existsSync(join(tempDir, 'src', 'custom', 'email.ts'))).toBe(true);
+
+    const config = readFileSync(join(tempDir, 'fastbackend.yaml'), 'utf-8');
+    expect(config).toContain('name: express');
+    expect(config).toContain('customPath: src/custom');
+  });
+
+  it('should reject incompatible adapter and schema pairs', () => {
+    expect(() =>
+      scaffoldProject(tempDir, {
+        name: 'bad-api',
+        schema: 'sqlalchemy',
+        adapter: 'express',
+      }),
+    ).toThrow(/does not support schema format/);
+  });
 });

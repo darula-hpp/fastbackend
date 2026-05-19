@@ -1,40 +1,22 @@
-import { readdirSync, readFileSync, existsSync } from 'node:fs';
-import { join } from 'node:path';
 import type { OpenAPISpec } from './generator.js';
+import type { RuntimeAdapterName } from '../runtime/types.js';
+import { scanCustomDirectory } from './scanner-strategies.js';
 
-interface CustomEndpoint {
-  path: string;
-  method: string;
-  summary?: string;
-  description?: string;
-  tags?: string[];
-  overrides?: string;
-}
-
-export interface OverrideMarker {
-  path: string;
-  method: string;
-}
-
-interface ScanResult {
-  endpoints: CustomEndpoint[];
-  overrides: OverrideMarker[];
-}
-
-const ROUTE_PATTERN = /@router\.(get|post|put|delete|patch)\(\s*["']([^"']+)["']/g;
-const OVERRIDE_PATTERN = /@(?:fastbackend\.)?override\(\s*["']([^"']+)["']\s*,\s*["'](\w+)["']\s*\)/g;
+export type { ScannedEndpoint as CustomEndpoint, OverrideMarker } from './scanner-strategies.js';
 
 export class CustomEndpointScanner {
-  scan(customPath: string): CustomEndpoint[] {
-    return this.scanDirectory(customPath).endpoints;
+  constructor(private readonly adapter: RuntimeAdapterName = 'fastapi') {}
+
+  scan(customPath: string) {
+    return scanCustomDirectory(customPath, this.adapter).endpoints;
   }
 
-  getOverrides(customPath: string): OverrideMarker[] {
-    return this.scanDirectory(customPath).overrides;
+  getOverrides(customPath: string) {
+    return scanCustomDirectory(customPath, this.adapter).overrides;
   }
 
   mergeCustomEndpoints(spec: OpenAPISpec, customPath: string): OpenAPISpec {
-    const { endpoints, overrides } = this.scanDirectory(customPath);
+    const { endpoints, overrides } = scanCustomDirectory(customPath, this.adapter);
     const merged = structuredClone(spec);
 
     for (const override of overrides) {
@@ -87,75 +69,5 @@ export class CustomEndpointScanner {
     }
 
     return merged;
-  }
-
-  private scanDirectory(customPath: string): ScanResult {
-    if (!existsSync(customPath)) {
-      return { endpoints: [], overrides: [] };
-    }
-
-    const endpoints: CustomEndpoint[] = [];
-    const overrides: OverrideMarker[] = [];
-
-    for (const file of this.findPythonFiles(customPath)) {
-      const extracted = this.extractFromFile(readFileSync(file, 'utf-8'));
-      endpoints.push(...extracted.endpoints);
-      overrides.push(...extracted.overrides);
-    }
-
-    return { endpoints, overrides };
-  }
-
-  private findPythonFiles(dir: string): string[] {
-    const files: string[] = [];
-
-    for (const entry of readdirSync(dir, { withFileTypes: true })) {
-      const fullPath = join(dir, entry.name);
-      if (entry.isDirectory()) {
-        files.push(...this.findPythonFiles(fullPath));
-      } else if (entry.name.endsWith('.py') && entry.name !== '__init__.py') {
-        files.push(fullPath);
-      }
-    }
-
-    return files;
-  }
-
-  private extractFromFile(content: string): ScanResult {
-    const endpoints: CustomEndpoint[] = [];
-    const overrides: OverrideMarker[] = [];
-
-    for (const match of content.matchAll(ROUTE_PATTERN)) {
-      const method = match[1];
-      const path = match[2];
-      const docstring = this.extractDocstring(content, match.index ?? 0);
-
-      endpoints.push({
-        path,
-        method,
-        summary: docstring?.split('\n')[0],
-        description: docstring,
-      });
-    }
-
-    for (const match of content.matchAll(OVERRIDE_PATTERN)) {
-      const path = match[1];
-      const method = match[2].toLowerCase();
-
-      endpoints.push({
-        path,
-        method,
-        overrides: `${method}:${path}`,
-      });
-      overrides.push({ path, method });
-    }
-
-    return { endpoints, overrides };
-  }
-
-  private extractDocstring(content: string, routeIndex: number): string | undefined {
-    const window = content.slice(routeIndex, routeIndex + 500);
-    const match = window.match(/"""([\s\S]*?)"""/);
-    return match?.[1]?.trim();
   }
 }

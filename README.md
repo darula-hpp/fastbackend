@@ -53,6 +53,7 @@ fastbackend dev
 
 - `@fastbackend/core` - Schema parsing, IR generation, OpenAPI generation
 - `@fastbackend/cli` - Command-line interface
+- `@fastbackend/express` - Express + Prisma runtime adapter
 - `fastbackend-fastapi` - Python FastAPI runtime adapter
 
 ## Testing
@@ -70,13 +71,16 @@ TypeScript packages use [Changesets](https://github.com/changesets/changesets):
 
 ```bash
 pnpm changeset          # describe changes
-pnpm version            # bump versions
+pnpm run version        # bump versions and update changelogs
 pnpm release            # build and publish to npm
+
+# npm 2FA enabled:
+pnpm release -- --otp=123456
 ```
 
 Published packages:
 
-- `@fastbackend/core` and `@fastbackend/cli` on npm
+- `@fastbackend/core`, `@fastbackend/cli`, and `@fastbackend/express` on npm
 - `fastbackend-fastapi` on PyPI (publish from `packages/fastapi` with `python -m build && twine upload dist/*`)
 
 Before publishing, verify tarball contents:
@@ -88,13 +92,8 @@ pnpm --filter @fastbackend/core pack
 
 ## Documentation
 
-See [docs/GUIDE.md](./docs/GUIDE.md) for:
-
-- IR reference and type definitions
-- Configuration format and examples
-- Custom endpoints and overrides
-- Adding FastBackend to existing projects
-- Troubleshooting
+- **Docs site:** [fastbackend/apps/docs](./apps/docs/) — run with `cd apps/docs && npm install && npm run dev`
+- **Guide (markdown):** [docs/GUIDE.md](./docs/GUIDE.md)
 
 ## Example
 

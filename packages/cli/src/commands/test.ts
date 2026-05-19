@@ -1,7 +1,7 @@
 import { spawn } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { ConfigLoader } from '@fastbackend/core';
+import { ConfigLoader, getRuntimeAdapter } from '@fastbackend/core';
 import { logger } from '../utils/logger.js';
 import { getProjectPaths } from '../utils/file-ops.js';
 
@@ -25,38 +25,32 @@ export async function testCommand(options: TestOptions = {}): Promise<void> {
 
   logger.info(`Running ${adapter} tests...`);
 
-  switch (adapter) {
-    case 'fastapi':
-      await runPytest(cwd);
-      break;
-    default:
-      logger.error(`No test runner configured for adapter: ${adapter}`);
-      process.exit(1);
+  try {
+    const runtimeAdapter = getRuntimeAdapter(adapter);
+    const { command, args } = runtimeAdapter.getTestCommand(cwd);
+    const hasTests = existsSync(resolve(cwd, adapter === 'fastapi' ? 'tests' : 'tests'));
+
+    await runProcess(command, args, cwd, hasTests);
+    logger.success('Tests passed');
+  } catch (error) {
+    logger.error(error instanceof Error ? error.message : String(error));
+    process.exit(1);
   }
 }
 
-function runPytest(cwd: string): Promise<void> {
-  const testsDir = resolve(cwd, 'tests');
-  const hasTests = existsSync(testsDir);
-
-  const args = hasTests
-    ? ['-m', 'pytest', 'tests/', '-v']
-    : ['-m', 'pytest', '--co', '-q'];
-
+function runProcess(command: string, args: string[], cwd: string, hasTests: boolean): Promise<void> {
   return new Promise((resolvePromise, reject) => {
-    const child = spawn('python3', args, { cwd, stdio: 'inherit' });
+    const child = spawn(command, args, { cwd, stdio: 'inherit' });
 
     child.on('error', () => {
-      logger.warn('pytest not found. Install with: pip install pytest');
-      reject(new Error('pytest not available'));
+      reject(new Error(`${command} not available for this adapter`));
     });
 
     child.on('close', (code) => {
       if (code === 0) {
-        logger.success('Tests passed');
         resolvePromise();
       } else if (!hasTests) {
-        logger.warn('No tests/ directory found. Create tests/ with pytest files.');
+        logger.warn('No tests/ directory found. Create tests/ with adapter-specific test files.');
         resolvePromise();
       } else {
         reject(new Error(`Tests failed with exit code ${code}`));

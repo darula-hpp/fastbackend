@@ -17,6 +17,8 @@ export * from './parsers/prisma/plugin.js';
 export * from './parsers/prisma/parser.js';
 export * from './openapi/generator.js';
 export * from './openapi/custom-endpoint-scanner.js';
+export * from './openapi/scanner-strategies.js';
+export * from './runtime/index.js';
 export * from './errors/index.js';
 export * from './assets/locator.js';
 

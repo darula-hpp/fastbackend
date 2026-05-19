@@ -89,4 +89,27 @@ describe('FastBackend E2E', () => {
     expect(existsSync(join(apiDir, 'Dockerfile'))).toBe(true);
     expect(existsSync(join(apiDir, 'docker-compose.yml'))).toBe(true);
   });
+
+  it('should complete init → generate workflow for Express adapter', () => {
+    execSync(`node "${CLI}" init express-api --schema prisma --adapter express`, {
+      cwd: projectDir,
+      stdio: 'pipe',
+    });
+
+    const apiDir = join(projectDir, 'express-api');
+    expect(existsSync(join(apiDir, 'fastbackend.yaml'))).toBe(true);
+    expect(existsSync(join(apiDir, 'schema.prisma'))).toBe(true);
+    expect(existsSync(join(apiDir, 'src', 'main.ts'))).toBe(true);
+    expect(existsSync(join(apiDir, 'src', 'custom', 'email.ts'))).toBe(true);
+
+    execSync(`node "${CLI}" generate`, { cwd: apiDir, stdio: 'pipe' });
+
+    const ir = JSON.parse(readFileSync(join(apiDir, '.fastbackend', 'ir.json'), 'utf-8'));
+    expect(ir.metadata.adapter).toBe('express');
+    expect(ir.entities.length).toBeGreaterThanOrEqual(2);
+
+    const openapi = readFileSync(join(apiDir, '.fastbackend', 'openapi.yaml'), 'utf-8');
+    expect(openapi).toContain('/users');
+    expect(openapi).toContain('/users/:userId/send-email');
+  });
 });

@@ -49,7 +49,7 @@ export async function generateCommand(configPath?: string): Promise<void> {
   let spec = await openapiGenerator.generate(ir, config.openapi);
 
   const customPath = resolve(cwd, config.adapter.customPath ?? 'app/custom');
-  const scanner = new CustomEndpointScanner();
+  const scanner = new CustomEndpointScanner(config.adapter.name as 'fastapi' | 'express' | 'spring');
   spec = scanner.mergeCustomEndpoints(spec, customPath);
 
   const openapiPath = resolve(cwd, config.openapi.outputPath);

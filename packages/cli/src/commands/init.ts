@@ -1,5 +1,6 @@
 import { resolve } from 'node:path';
 import { mkdirSync } from 'node:fs';
+import { getRuntimeAdapter, validateAdapterSchemaPair } from '@fastbackend/core';
 import { scaffoldProject } from '../utils/scaffold.js';
 import { logger } from '../utils/logger.js';
 import { fileExists } from '../utils/file-ops.js';
@@ -11,6 +12,8 @@ export interface InitOptions {
 }
 
 export async function initCommand(name: string, options: InitOptions): Promise<void> {
+  validateAdapterSchemaPair(options.adapter, options.schema);
+
   const cwd = resolve(process.cwd(), name);
 
   if (fileExists(cwd)) {
@@ -34,10 +37,25 @@ export async function initCommand(name: string, options: InitOptions): Promise<v
     logger.info(`  ${file}`);
   }
 
+  const adapter = getRuntimeAdapter(options.adapter);
+
   logger.info('');
   logger.info('Next steps:');
   logger.info(`  cd ${name}`);
-  logger.info('  pip install -r requirements.txt');
+
+  switch (adapter.language) {
+    case 'typescript':
+      logger.info('  npm install');
+      logger.info('  cp .env.example .env');
+      logger.info('  npx prisma migrate dev');
+      break;
+    case 'python':
+      logger.info('  pip install -r requirements.txt');
+      break;
+    default:
+      break;
+  }
+
   logger.info('  fastbackend generate');
   logger.info('  fastbackend dev');
 }

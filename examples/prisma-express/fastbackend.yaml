@@ -1,0 +1,27 @@
+project:
+  name: prisma-express
+  version: 1.0.0
+  description: Prisma + Express example for FastBackend
+
+schema:
+  format: prisma
+  path: schema.prisma
+
+adapter:
+  name: express
+  customPath: src/custom
+
+openapi:
+  outputPath: .fastbackend/openapi.yaml
+  title: prisma-express
+  version: 1.0.0
+  servers:
+    - url: http://localhost:3000
+      description: Development server
+  annotations:
+    relationships: true
+
+development:
+  watch: true
+  port: 3000
+  hotReload: true

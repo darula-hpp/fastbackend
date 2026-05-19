@@ -1,10 +1,10 @@
 import { resolve } from 'node:path';
-import { ConfigLoader } from '@fastbackend/core';
+import { ConfigLoader, getRuntimeAdapter } from '@fastbackend/core';
 import { generateCommand } from './generate.js';
 import { logger } from '../utils/logger.js';
 import { getProjectPaths, fileExists } from '../utils/file-ops.js';
 import { DevWatcher } from '../dev/watcher.js';
-import { startFastApiServer } from '../dev/server.js';
+import { startAdapterServer } from '../dev/server.js';
 
 export interface DevOptions {
   watch?: boolean;
@@ -22,7 +22,8 @@ export async function devCommand(options: DevOptions = {}): Promise<void> {
 
   const loader = new ConfigLoader();
   const config = await loader.load(paths.config);
-  const port = options.port ?? config.development?.port ?? 8000;
+  const runtimeAdapter = getRuntimeAdapter(config.adapter.name);
+  const port = options.port ?? config.development?.port ?? runtimeAdapter.defaultPort;
   const watchEnabled = options.watch ?? config.development?.watch ?? false;
 
   const watcher = new DevWatcher();
@@ -38,8 +39,8 @@ export async function devCommand(options: DevOptions = {}): Promise<void> {
     });
   }
 
-  logger.info(`Starting FastAPI runtime on port ${port}...`);
+  logger.info(`Starting ${runtimeAdapter.name} runtime on port ${port}...`);
 
   const hotReload = config.development?.hotReload ?? true;
-  await startFastApiServer({ cwd, port, hotReload });
+  await startAdapterServer(runtimeAdapter.name, { cwd, port, hotReload });
 }

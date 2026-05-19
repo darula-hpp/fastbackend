@@ -1,0 +1,135 @@
+[
+  {
+    "title": "Introduction",
+    "section": "Getting Started",
+    "slug": "introduction",
+    "href": "/docs/getting-started/introduction",
+    "content": "Introduction\nFastBackend is a schema-driven backend runtime that transforms database schemas into dynamic REST APIs with OpenAPI specifications.\nIt mirrors UIGen's architecture: routes exist only in memory at runtime. Only IR and OpenAPI are written to disk.\nWhat FastBackend Does\nWhat You Own\nPackages\n- Schema parsing, IR generation, OpenAPI generation\n- Command-line interface\n- Python FastAPI runtime adapter\nExamples\nSQLAlchemy + FastAPI\nPrisma + FastAPI"
+  },
+  {
+    "title": "Quick Start",
+    "section": "Getting Started",
+    "slug": "quick-start",
+    "href": "/docs/getting-started/quick-start",
+    "content": "Quick Start\nBuild FastBackend (monorepo dev)\nInstall the Python runtime\nCreate a project\nGenerate and run\nTry the API\nOpen http://localhost:8000/docs for interactive API docs.\nUse the Example Project"
+  },
+  {
+    "title": "Installation",
+    "section": "Getting Started",
+    "slug": "installation",
+    "href": "/docs/getting-started/installation",
+    "content": "Installation\nPrerequisites\nNode.js 20+ and pnpm (CLI and core)\nPython 3.10+ (FastAPI adapter)\nSQLAlchemy or Prisma schema\nCLI (published)\nMonorepo development\nUse the local CLI:\nPython runtime (published)\nPython runtime (local development)\nDocker (optional)\nScaffold Docker templates when initializing:\nRun  before building the image so  exists in the container context."
+  },
+  {
+    "title": "How It Works",
+    "section": "Core Concepts",
+    "slug": "how-it-works",
+    "href": "/docs/core-concepts/how-it-works",
+    "content": "How It Works\nFastBackend follows a three-stage pipeline:\nStage 1: Schema Parsing\nThe CLI reads your schema file and parses entities, fields, relationships, and enums.\nSupported formats:\nSQLAlchemy ()\nPrisma ()\nStage 2: IR Generation\nThe parser output is normalized into a versioned Intermediate Representation (IR) at .\nOpenAPI is generated from the IR at .\nNo route code is generated. FastBackend does not write CRUD routers to disk.\nStage 3: Runtime\nThe FastAPI adapter reads IR at startup and dynamically registers:\nCRUD routes per entity\nRelationship routes\nCustom endpoints from \nHealth check at \nPydantic models are created at runtime for request validation.\nWatch Mode\nWhen  is enabled in , the CLI watches your schema and config files and re-runs  on change. Uvicorn hot-reload picks up Python changes in custom endpoints."
+  },
+  {
+    "title": "Intermediate Representation",
+    "section": "Core Concepts",
+    "slug": "intermediate-representation",
+    "href": "/docs/core-concepts/intermediate-representation",
+    "content": "Intermediate Representation\nThe IR is JSON stored at . It is the contract between  and runtime adapters.\nRoot Structure\nEntity\nField\nType bases: , , , , , , , , \nFormats: , , \nRelationship\nTypes: , , , \nValidation Rules"
+  },
+  {
+    "title": "Runtime Architecture",
+    "section": "Core Concepts",
+    "slug": "runtime-architecture",
+    "href": "/docs/core-concepts/runtime-architecture",
+    "content": "Runtime Architecture\nThe  package reads IR and builds the application at startup.\nEngines\nRoute Registry\nThe runtime tracks which routes were registered and which were overridden by custom code. Overridden paths are skipped during CRUD registration.\nCustom Endpoints\nFiles in  export a FastAPI . The runtime imports each module and calls .\nEntry Point\nDefaults:\nIR path: \nCustom path: \nIn-Memory Store\nThe MVP runtime uses an in-memory store for CRUD operations during development. Production deployments should connect engines to your database layer as adapters evolve."
+  },
+  {
+    "title": "Overview",
+    "section": "Configuration",
+    "slug": "overview",
+    "href": "/docs/configuration/overview",
+    "content": "Configuration\nConfiguration lives in  at the project root.\nFull Example\nPrisma Schema\nEnvironment Variables\nUse  syntax anywhere in the config. Missing variables raise a .\nEnvironment-Specific Config\nCreate  or  alongside the base config. Values merge over the base file."
+  },
+  {
+    "title": "init",
+    "section": "CLI Reference",
+    "slug": "init",
+    "href": "/docs/cli-reference/init",
+    "content": "fastbackend init\nInitialize a new FastBackend project.\nOptions\nExample\nCreates"
+  },
+  {
+    "title": "generate",
+    "section": "CLI Reference",
+    "slug": "generate",
+    "href": "/docs/cli-reference/generate",
+    "content": "fastbackend generate\nParse your schema and write IR and OpenAPI. Does not generate route code.\nOptions\nOutput\nExample"
+  },
+  {
+    "title": "dev",
+    "section": "CLI Reference",
+    "slug": "dev",
+    "href": "/docs/cli-reference/dev",
+    "content": "fastbackend dev\nStart the FastAPI development server. Runs  first if IR is missing.\nOptions\nExample\nUses uvicorn with hot reload when  is enabled in config."
+  },
+  {
+    "title": "build",
+    "section": "CLI Reference",
+    "slug": "build",
+    "href": "/docs/cli-reference/build",
+    "content": "fastbackend build\nGenerate production IR and OpenAPI (same as  for the MVP).\nUse in CI before deploying. Ensure  is available to the runtime in your deployment environment."
+  },
+  {
+    "title": "test",
+    "section": "CLI Reference",
+    "slug": "test",
+    "href": "/docs/cli-reference/test",
+    "content": "fastbackend test\nRun framework-specific tests for the current project.\nOptions\nExample\nScaffolded projects include , , and ."
+  },
+  {
+    "title": "migrate",
+    "section": "CLI Reference",
+    "slug": "migrate",
+    "href": "/docs/cli-reference/migrate",
+    "content": "fastbackend migrate\nRun database migrations. Adapter-specific behavior applies.\nFor SQLAlchemy projects, integrate Alembic in your project. For Prisma, use . FastBackend does not replace your migration tool."
+  },
+  {
+    "title": "docker:build",
+    "section": "CLI Reference",
+    "slug": "docker-build",
+    "href": "/docs/cli-reference/docker-build",
+    "content": "fastbackend docker:build\nBuild a Docker image using the project Dockerfile.\nOptions\nExample\nRun  to scaffold Dockerfile templates. Use  in the Dockerfile CMD for multi-stage builds."
+  },
+  {
+    "title": "Overview",
+    "section": "Custom Endpoints",
+    "slug": "overview",
+    "href": "/docs/custom-endpoints/overview",
+    "content": "Custom Endpoints\nAdd files to  with a FastAPI router:\nCustom endpoints are registered at runtime alongside generated routes. Re-run  to include them in OpenAPI.\nSee examples/sqlalchemy-fastapi/app/custom/ for working examples."
+  },
+  {
+    "title": "Overrides",
+    "section": "Custom Endpoints",
+    "slug": "overrides",
+    "href": "/docs/custom-endpoints/overrides",
+    "content": "Overrides\nReplace a runtime-created CRUD endpoint with custom logic using the  decorator:\nWhen an endpoint is overridden:\nThe runtime skips creating the default route\nOpenAPI marks the path with \nSupported methods: , , , ."
+  },
+  {
+    "title": "Existing Projects",
+    "section": "Migration",
+    "slug": "existing-project",
+    "href": "/docs/migration/existing-project",
+    "content": "Adding FastBackend to an Existing Project\nInstall packages:\nCreate  pointing to your existing schema file.\nCreate  and move existing custom routes there.\nReplace manual CRUD routes with the runtime:\nRun  to produce IR and OpenAPI.\nRemove hand-written CRUD route files that duplicate runtime behavior.\nBefore vs After\nKeep: schema definitions, custom business logic, database migrations, auth middleware."
+  },
+  {
+    "title": "Overview",
+    "section": "Testing",
+    "slug": "overview",
+    "href": "/docs/testing/overview",
+    "content": "Testing\nProject Tests\nScaffolded projects include:\nRun with:\nMonorepo Tests\nFrom the  root:"
+  },
+  {
+    "title": "Common Issues",
+    "section": "Troubleshooting",
+    "slug": "common-issues",
+    "href": "/docs/troubleshooting/common-issues",
+    "content": "Common Issues\nSchema Parsing\nVerify Python 3.10+: \nInstall SQLAlchemy: \nEnsure  and  are set\nDefine a  class inheriting from \nIR Validation\nCheck  for the partial IR\nEnsure all entities have fields and a primary key\nConfiguration\nExport the variable or remove  from config\nSupported: , \nRuntime\nRun  before \nValidate  is valid JSON\nRun with : \nDocker\nRun \nContainer exits immediately*\nUse  in Dockerfile CMD\nRun  before \nDebug Mode"
+  }
+]

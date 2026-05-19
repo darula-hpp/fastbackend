@@ -1,0 +1,73 @@
+{
+  "name": "@fastbackend/express",
+  "version": "0.1.1",
+  "description": "Express runtime adapter for FastBackend with Prisma persistence",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/darula-hpp/uigen.git",
+    "directory": "fastbackend/packages/express"
+  },
+  "homepage": "https://github.com/darula-hpp/uigen/tree/main/fastbackend/packages/express",
+  "bugs": {
+    "url": "https://github.com/darula-hpp/uigen/issues"
+  },
+  "type": "module",
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts",
+    "!dist/**/__tests__/**",
+    "!dist/**/*.test.js",
+    "!dist/**/*.test.d.ts"
+  ],
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "pnpm run build",
+    "dev": "tsc --watch",
+    "test": "vitest",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix"
+  },
+  "dependencies": {
+    "@fastbackend/core": "workspace:*",
+    "express": "^4.21.2",
+    "zod": "^3.24.2"
+  },
+  "peerDependencies": {
+    "@prisma/client": "^5.0.0 || ^6.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@prisma/client": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@prisma/client": "^6.5.0",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.0.0",
+    "@types/supertest": "^6.0.3",
+    "prisma": "^6.5.0",
+    "supertest": "^7.0.0",
+    "tsx": "^4.19.3",
+    "typescript": "^5.6.0",
+    "vitest": "^2.0.0"
+  },
+  "keywords": [
+    "fastbackend",
+    "express",
+    "prisma",
+    "backend-framework",
+    "runtime"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}
