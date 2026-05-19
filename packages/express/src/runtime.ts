@@ -6,6 +6,8 @@ import { loadIr } from './utils/ir-loader.js';
 import { RouteRegistry } from './utils/route-registry.js';
 import { PrismaStore, type PrismaLikeClient } from './utils/prisma-store.js';
 import { registerCustomRoutes, scanOverrideMarkers } from './utils/custom-routes.js';
+import { pluralize } from './utils/path-utils.js';
+import type { IRDocument } from './utils/ir-loader.js';
 
 export interface InitializationResult {
   success: boolean;
@@ -41,6 +43,7 @@ export class Runtime {
       this.app.use(express.json());
 
       scanOverrideMarkers(this.customPath, this.registry);
+      this.registerRootRoute(ir);
       this.registerHealthCheck(store);
 
       for (const entity of ir.entities) {
@@ -71,6 +74,27 @@ export class Runtime {
         errors: [formatRuntimeError(error)],
       };
     }
+  }
+
+  private registerRootRoute(ir: IRDocument): void {
+    if (!this.app) {
+      return;
+    }
+
+    this.app.get('/', (_req, res) => {
+      res.json({
+        name: ir.metadata.projectName,
+        adapter: ir.metadata.adapter,
+        schemaFormat: ir.metadata.schemaFormat,
+        message: 'FastBackend API is running. Use the resource paths below.',
+        endpoints: {
+          health: '/health',
+          resources: ir.entities.map((entity) => `/${pluralize(entity.name)}`),
+        },
+      });
+    });
+
+    this.registry.register('/', ['GET']);
   }
 
   private registerHealthCheck(store: PrismaStore): void {
@@ -125,7 +149,10 @@ export async function startServer(options: RuntimeOptions & { port?: number } = 
   const port = options.port ?? Number(process.env.PORT ?? 3000);
 
   await new Promise<void>((resolve) => {
-    app.listen(port, () => resolve());
+    app.listen(port, () => {
+      console.log(`FastBackend Express running on http://localhost:${port}`);
+      resolve();
+    });
   });
 
   return app;

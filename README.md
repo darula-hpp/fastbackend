@@ -2,40 +2,108 @@
 
 Schema-driven backend **runtime** that transforms database schemas into dynamic REST APIs with OpenAPI specifications.
 
+FastBackend ships two runtime adapters:
+
+| Adapter | Stack | Persistence | Best for |
+|---------|-------|-------------|----------|
+| **FastAPI** | Python | In-memory (MVP) | SQLAlchemy or Prisma schema, Python teams |
+| **Express** | TypeScript | Prisma Client | Prisma schema, Node/TypeScript teams |
+
+Core and CLI are adapter-agnostic. They parse your schema, write IR and OpenAPI to disk, and the runtime adapter registers routes in memory.
+
+## How It Works
+
+FastBackend uses a **schema-first pipeline**: your database schema is the source of truth, the CLI generates IR and OpenAPI to disk, and the runtime adapter registers REST routes in memory at startup. No ORM boilerplate, no route files to maintain.
+
+```
+CLI Command
+    |
+    v
++----------------+     +----------------+     +------+     +-------------+
+| Schema File    |---->| Schema Parser  |---->|  IR  |---->|  OpenAPI    |
+| (Prisma /      |     | Plugin         |     |      |     |  Spec       |
+|  SQLAlchemy)   |     +----------------+     +------+     +-------------+
++----------------+           ^                    |               |
+       |                     |                    |               |
+       |              +----------------+          |         +-------------+
+       |              | fastbackend    |          |         | .fastbackend|
+       |              | .yaml          |          +-------->| (on disk)   |
+       |              +----------------+                    +-------------+
+       |
+       | (you own schema + config; FastBackend never edits them)
+       |
+       +----------------------------------------------+
+                                                      |
+                                                      v
+                                               +----------------+
+                                               | Runtime Adapter|----> REST API
+                                               | FastAPI or     |     (in memory)
+                                               | Express        |
+                                               +----------------+
+                                                      ^
+                                               +----------------+
+                                               | Custom Routes  |
+                                               | & Overrides    |
+                                               +----------------+
+```
+
+**Generate step:** `@fastbackend/core` parses your schema into a framework-agnostic IR (entities, fields, relationships, validation rules), then emits OpenAPI for downstream tools like UIGen.
+
+**Dev step:** The runtime adapter loads IR, wires CRUD and relationship routes, applies validation (Pydantic or Zod), and mounts your custom endpoints. FastAPI uses an in-memory store today; Express uses Prisma Client against your database.
+
 ## Quick Start
 
+### Install the CLI
+
 ```bash
-# Install dependencies (monorepo development)
+npm install -g @fastbackend/cli
+```
+
+For monorepo development, build from source instead:
+
+```bash
 cd fastbackend
 pnpm install && pnpm build
+# then use: node packages/cli/dist/index.js ...
+```
 
-# Create a project
-node packages/cli/dist/index.js init my-api --schema sqlalchemy --adapter fastapi
+### FastAPI (Python)
+
+```bash
+fastbackend init my-api --schema sqlalchemy --adapter fastapi
 cd my-api
-
-# Install Python runtime
 pip install -r requirements.txt
-
-# Generate IR + OpenAPI from schema
 fastbackend generate
-
-# Start development server
 fastbackend dev
 ```
+
+### Express (TypeScript + Prisma)
+
+```bash
+fastbackend init my-api --schema prisma --adapter express
+cd my-api
+npm install
+cp .env.example .env
+npx prisma migrate dev
+fastbackend generate
+fastbackend dev
+```
+
+Express requires a Prisma schema. SQLAlchemy schemas are not supported on the Express adapter.
 
 ## What Gets Generated vs Runtime
 
 | Written to disk | Runtime only (in memory) |
 |-----------------|--------------------------|
-| `.fastbackend/ir.json` | FastAPI routes |
-| `.fastbackend/openapi.yaml` | Pydantic models |
+| `.fastbackend/ir.json` | REST routes (CRUD, relationships, custom) |
+| `.fastbackend/openapi.yaml` | Validation (Pydantic or Zod) |
 | | Query builders |
 
 | You own | FastBackend never modifies |
 |---------|---------------------------|
 | `models.py` / `schema.prisma` | Schema files |
 | `fastbackend.yaml` | Config |
-| `app/custom/*.py` | Custom endpoints |
+| `app/custom/*` or `src/custom/*` | Custom endpoints |
 
 ## CLI Commands
 
@@ -51,10 +119,15 @@ fastbackend dev
 
 ## Packages
 
-- `@fastbackend/core` - Schema parsing, IR generation, OpenAPI generation
-- `@fastbackend/cli` - Command-line interface
-- `@fastbackend/express` - Express + Prisma runtime adapter
-- `fastbackend-fastapi` - Python FastAPI runtime adapter
+Published on npm (public):
+
+- [`@fastbackend/core`](https://www.npmjs.com/package/@fastbackend/core) - Schema parsing, IR generation, OpenAPI generation
+- [`@fastbackend/cli`](https://www.npmjs.com/package/@fastbackend/cli) - Command-line interface
+- [`@fastbackend/express`](https://www.npmjs.com/package/@fastbackend/express) - Express + Prisma runtime adapter
+
+Python adapter (PyPI):
+
+- `fastbackend-fastapi` - FastAPI runtime adapter
 
 ## Testing
 
@@ -78,10 +151,7 @@ pnpm release            # build and publish to npm
 pnpm release -- --otp=123456
 ```
 
-Published packages:
-
-- `@fastbackend/core`, `@fastbackend/cli`, and `@fastbackend/express` on npm
-- `fastbackend-fastapi` on PyPI (publish from `packages/fastapi` with `python -m build && twine upload dist/*`)
+All `@fastbackend/*` scoped packages publish with public access.
 
 Before publishing, verify tarball contents:
 
@@ -92,9 +162,13 @@ pnpm --filter @fastbackend/core pack
 
 ## Documentation
 
-- **Docs site:** [fastbackend/apps/docs](./apps/docs/) — run with `cd apps/docs && npm install && npm run dev`
+- **Docs site:** [fastbackend/apps/docs](./apps/docs/) - run with `cd apps/docs && npm install && npm run dev`
 - **Guide (markdown):** [docs/GUIDE.md](./docs/GUIDE.md)
 
-## Example
+## Examples
 
-See [examples/sqlalchemy-fastapi](./examples/sqlalchemy-fastapi/) for SQLAlchemy, or [examples/prisma-fastapi](./examples/prisma-fastapi/) for Prisma.
+| Example | Adapter | Schema |
+|---------|---------|--------|
+| [sqlalchemy-fastapi](./examples/sqlalchemy-fastapi/) | FastAPI | SQLAlchemy |
+| [prisma-fastapi](./examples/prisma-fastapi/) | FastAPI | Prisma |
+| [prisma-express](./examples/prisma-express/) | Express | Prisma |

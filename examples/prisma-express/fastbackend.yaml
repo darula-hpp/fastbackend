@@ -16,12 +16,12 @@ openapi:
   title: prisma-express
   version: 1.0.0
   servers:
-    - url: http://localhost:3000
+    - url: http://localhost:3001
       description: Development server
   annotations:
     relationships: true
 
 development:
   watch: true
-  port: 3000
+  port: 3001
   hotReload: true

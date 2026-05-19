@@ -4,6 +4,7 @@ import { resolve } from 'node:path';
 import { ConfigLoader, getRuntimeAdapter } from '@fastbackend/core';
 import { logger } from '../utils/logger.js';
 import { getProjectPaths } from '../utils/file-ops.js';
+import { loadProjectEnv } from '../utils/load-project-env.js';
 
 export interface TestOptions {
   adapter?: string;
@@ -40,7 +41,7 @@ export async function testCommand(options: TestOptions = {}): Promise<void> {
 
 function runProcess(command: string, args: string[], cwd: string, hasTests: boolean): Promise<void> {
   return new Promise((resolvePromise, reject) => {
-    const child = spawn(command, args, { cwd, stdio: 'inherit' });
+    const child = spawn(command, args, { cwd, stdio: 'inherit', env: loadProjectEnv(cwd) });
 
     child.on('error', () => {
       reject(new Error(`${command} not available for this adapter`));

@@ -99,6 +99,7 @@ fastbackend dev
 `;
 
 const ENV_EXAMPLE = `DATABASE_URL=postgresql://postgres:postgres@localhost:5432/{{name}}
+PORT=3000
 `;
 
 const VITEST_CONFIG = `import { defineConfig } from 'vitest/config';

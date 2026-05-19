@@ -71,6 +71,39 @@ pytest>=8.0.0
 httpx>=0.27.0
 `;
 
+const ENV_EXAMPLE_SQLALCHEMY = `PORT=8000
+`;
+
+const ENV_EXAMPLE_PRISMA = `DATABASE_URL=postgresql://postgres:postgres@localhost:5432/{{name}}
+PORT=8000
+`;
+
+const USERS_OVERRIDE_PY = `"""Override example: replace the generated GET /users/{id} route."""
+from fastapi import APIRouter
+from fastbackend_fastapi import override
+
+router = APIRouter()
+
+
+@override("/users/{id}", "get")
+@router.get("/users/{user_id}")
+async def custom_get_user(user_id: int):
+    return {
+        "id": user_id,
+        "name": "Override User",
+        "email": "override@example.com",
+        "source": "custom-override",
+    }
+`;
+
+const TEST_OVERRIDES_PY = `def test_user_retrieve_override(client):
+    response = client.get("/users/1")
+    assert response.status_code == 200
+    body = response.json()
+    assert body["source"] == "custom-override"
+    assert body["email"] == "override@example.com"
+`;
+
 const README_MD = `# {{name}}
 
 Schema-driven backend powered by FastBackend.
@@ -79,6 +112,7 @@ Schema-driven backend powered by FastBackend.
 
 \`\`\`bash
 pip install -r requirements.txt
+cp .env.example .env
 npm install -g @fastbackend/cli
 \`\`\`
 
@@ -199,7 +233,14 @@ async def send_email(user_id: int):
     return {"status": "sent", "user_id": user_id}
 `,
   );
+  writeFile(join(cwd, 'app', 'custom', 'users_override.py'), USERS_OVERRIDE_PY);
   created.push('app/custom/');
+
+  writeFile(
+    join(cwd, '.env.example'),
+    vars.schema === 'prisma' ? render(ENV_EXAMPLE_PRISMA, vars) : ENV_EXAMPLE_SQLALCHEMY,
+  );
+  created.push('.env.example');
 
   writeFile(
     join(cwd, 'tests', 'conftest.py'),
@@ -221,6 +262,7 @@ def client() -> TestClient:
     assert response.json()["status"] == "healthy"
 `,
   );
+  writeFile(join(cwd, 'tests', 'test_overrides.py'), TEST_OVERRIDES_PY);
   created.push('tests/');
 
   writeFile(join(cwd, '.gitignore'), `.fastbackend/

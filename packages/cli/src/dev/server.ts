@@ -1,14 +1,16 @@
 import { spawn, type ChildProcess } from 'node:child_process';
 import { getRuntimeAdapter } from '@fastbackend/core';
 import { logger } from '../utils/logger.js';
+import { loadProjectEnv } from '../utils/load-project-env.js';
 import type { DevServerOptions } from '@fastbackend/core';
 
 export function startAdapterServer(adapterName: string, options: DevServerOptions): Promise<ChildProcess> {
   const adapter = getRuntimeAdapter(adapterName);
   const { command, args } = adapter.getDevCommand(options);
+  const env = loadProjectEnv(options.cwd);
 
   return new Promise((resolvePromise, reject) => {
-    const child = spawn(command, args, { cwd: options.cwd, stdio: 'inherit', env: process.env });
+    const child = spawn(command, args, { cwd: options.cwd, stdio: 'inherit', env });
 
     child.on('error', (err) => {
       logger.error(`Failed to start server: ${err.message}`);

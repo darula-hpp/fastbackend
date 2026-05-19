@@ -38,6 +38,10 @@ describe('@fastbackend/express runtime', () => {
     expect(health.status).toBe(200);
     expect(health.body.status).toBe('healthy');
 
+    const root = await request(app).get('/');
+    expect(root.status).toBe(200);
+    expect(root.body.endpoints.resources).toContain('/users');
+
     const users = await request(app).get('/users');
     expect(users.status).toBe(200);
     expect(users.body).toHaveLength(1);

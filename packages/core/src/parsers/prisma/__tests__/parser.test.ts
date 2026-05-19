@@ -30,10 +30,21 @@ describe('Prisma parser', () => {
     expect(parsed.enums![0].values).toHaveLength(2);
   });
 
-  it('should extract relationships', () => {
+  it('should treat optional scalar fields as fields, not relationships', () => {
     const parsed = parsePrismaSchema(schemaPath);
-    expect(parsed.relationships.length).toBeGreaterThanOrEqual(1);
-    expect(parsed.relationships.some((r) => r.name === 'posts' || r.name === 'author')).toBe(true);
+    const post = parsed.entities.find((entity) => entity.name === 'Post');
+
+    expect(post?.fields.some((field) => field.name === 'content' && field.type === 'string')).toBe(true);
+    expect(parsed.relationships.some((relationship) => relationship.targetEntity === 'String?')).toBe(false);
+    expect(parsed.relationships.some((relationship) => relationship.name === 'content')).toBe(false);
+  });
+
+  it('should not duplicate foreign key fields already declared on the model', () => {
+    const parsed = parsePrismaSchema(schemaPath);
+    const post = parsed.entities.find((entity) => entity.name === 'Post');
+    const authorIdFields = post?.fields.filter((field) => field.name === 'authorId') ?? [];
+
+    expect(authorIdFields).toHaveLength(1);
   });
 
   it('should generate valid IR via plugin', async () => {

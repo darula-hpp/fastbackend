@@ -130,7 +130,13 @@ function parseFieldLine(line: string, enumNames: Set<string>): PrismaField | nul
   const isList = type.endsWith('[]');
   if (isList) type = type.slice(0, -2);
 
-  const attrs = line.slice(line.indexOf(type) + type.length);
+  let isOptional = false;
+  if (type.endsWith('?')) {
+    isOptional = true;
+    type = type.slice(0, -1);
+  }
+
+  const attrs = line.slice(line.indexOf(parts[1]) + parts[1].length);
 
   const isRelation = attrs.includes('@relation') || (!PRISMA_TO_IR_TYPE[type] && !enumNames.has(type) && !isList && type[0] === type[0].toUpperCase());
 
@@ -138,7 +144,7 @@ function parseFieldLine(line: string, enumNames: Set<string>): PrismaField | nul
     return {
       name,
       type,
-      isOptional: attrs.includes('?'),
+      isOptional,
       isList,
       isId: false,
       isUnique: false,
@@ -155,7 +161,7 @@ function parseFieldLine(line: string, enumNames: Set<string>): PrismaField | nul
     return {
       name,
       type,
-      isOptional: attrs.includes('?'),
+      isOptional,
       isList,
       isId: false,
       isUnique: false,
@@ -170,7 +176,7 @@ function parseFieldLine(line: string, enumNames: Set<string>): PrismaField | nul
   return {
     name,
     type: enumNames.has(type) ? `enum:${type}` : type,
-    isOptional: attrs.includes('?'),
+    isOptional,
     isList,
     isId: attrs.includes('@id'),
     isUnique: attrs.includes('@unique'),
@@ -183,8 +189,11 @@ function modelToEntity(model: PrismaModel): ParsedEntity {
   const scalarFields = model.fields.filter(
     (f) => !f.relationFromFields && !f.relationName?.startsWith('_'),
   );
+  const scalarFieldNames = new Set(scalarFields.map((field) => field.name));
 
-  const relationOnlyFields = model.fields.filter((f) => f.relationFromFields);
+  const relationOnlyFields = model.fields.filter(
+    (f) => f.relationFromFields && !scalarFieldNames.has(f.relationFromFields[0]),
+  );
 
   const fields: ParsedField[] = [
     ...scalarFields

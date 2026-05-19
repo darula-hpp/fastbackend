@@ -11,6 +11,14 @@ export interface DevOptions {
   port?: number;
 }
 
+export function resolveDevPort(
+  options: DevOptions,
+  config: Awaited<ReturnType<ConfigLoader['load']>>,
+  adapter: ReturnType<typeof getRuntimeAdapter>,
+): number {
+  return options.port ?? config.development?.port ?? adapter.defaultPort;
+}
+
 export async function devCommand(options: DevOptions = {}): Promise<void> {
   const cwd = process.cwd();
   const paths = getProjectPaths(cwd);
@@ -23,7 +31,7 @@ export async function devCommand(options: DevOptions = {}): Promise<void> {
   const loader = new ConfigLoader();
   const config = await loader.load(paths.config);
   const runtimeAdapter = getRuntimeAdapter(config.adapter.name);
-  const port = options.port ?? config.development?.port ?? runtimeAdapter.defaultPort;
+  const port = resolveDevPort(options, config, runtimeAdapter);
   const watchEnabled = options.watch ?? config.development?.watch ?? false;
 
   const watcher = new DevWatcher();

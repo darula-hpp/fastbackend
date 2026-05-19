@@ -1,3 +1,5 @@
+import { resolve } from 'node:path';
+import { createRequire } from 'node:module';
 import { toPrismaDelegateKey } from './path-utils.js';
 import type { IREntity } from './ir-loader.js';
 
@@ -39,14 +41,16 @@ export class PrismaStore {
     await delegate.findMany({ take: 1 });
   }
 
-  static async loadFromProject(): Promise<PrismaLikeClient> {
+  static async loadFromProject(projectRoot = process.cwd()): Promise<PrismaLikeClient> {
     if (!process.env.DATABASE_URL) {
       throw new Error('DATABASE_URL is required for the Express runtime adapter');
     }
 
-    const mod = await import('@prisma/client');
-    const PrismaClient = mod.PrismaClient as new () => PrismaLikeClient & { $connect(): Promise<void> };
-    const client = new PrismaClient();
+    const require = createRequire(resolve(projectRoot, 'package.json'));
+    const mod = require('@prisma/client') as {
+      PrismaClient: new () => PrismaLikeClient & { $connect(): Promise<void> };
+    };
+    const client = new mod.PrismaClient();
     await client.$connect();
     return client;
   }

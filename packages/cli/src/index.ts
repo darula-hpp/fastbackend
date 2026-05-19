@@ -16,6 +16,7 @@ import { migrateCommand } from './commands/migrate.js';
 import { dockerBuildCommand } from './commands/docker-build.js';
 import { testCommand } from './commands/test.js';
 import { logger } from './utils/logger.js';
+import { applyProjectEnv } from './utils/load-project-env.js';
 
 const require = createRequire(import.meta.url);
 const { version } = require('../package.json') as { version: string };
@@ -28,10 +29,14 @@ program
   .version(version)
   .option('--debug', 'Enable debug logging');
 
-program.hook('preAction', (thisCommand) => {
-  const opts = thisCommand.opts();
+program.hook('preAction', (_thisCommand, actionCommand) => {
+  const opts = _thisCommand.opts();
   if (opts.debug) {
     logger.setDebug(true);
+  }
+
+  if (actionCommand.name() !== 'init') {
+    applyProjectEnv(process.cwd());
   }
 });
 
@@ -68,12 +73,12 @@ program
   .command('dev')
   .description('Start development server with optional watch mode')
   .option('--watch', 'Watch schema and config for changes')
-  .option('--port <port>', 'Server port', '8000')
-  .action(async (options: { watch?: boolean; port: string }) => {
+  .option('--port <port>', 'Server port')
+  .action(async (options: { watch?: boolean; port?: string }) => {
     try {
       await devCommand({
         watch: options.watch,
-        port: parseInt(options.port, 10),
+        port: options.port ? parseInt(options.port, 10) : undefined,
       });
     } catch (error) {
       logger.error(error instanceof Error ? error.message : String(error));

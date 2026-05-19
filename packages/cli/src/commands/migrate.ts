@@ -3,6 +3,7 @@ import { existsSync } from 'node:fs';
 import { ConfigLoader, getRuntimeAdapter } from '@fastbackend/core';
 import { logger } from '../utils/logger.js';
 import { getProjectPaths } from '../utils/file-ops.js';
+import { loadProjectEnv } from '../utils/load-project-env.js';
 
 export async function migrateCommand(): Promise<void> {
   const cwd = process.cwd();
@@ -23,6 +24,7 @@ export async function migrateCommand(): Promise<void> {
   const child = spawn(command, args, {
     cwd,
     stdio: 'inherit',
+    env: loadProjectEnv(cwd),
   });
 
   child.on('error', () => {
