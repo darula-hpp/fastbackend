@@ -1,5 +1,11 @@
 # @fastbackend/core
 
+## 0.2.0
+
+### Minor Changes
+
+- Update the packages and Readme
+
 ## 0.1.2
 
 ### Patch Changes

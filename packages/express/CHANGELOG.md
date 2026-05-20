@@ -1,5 +1,16 @@
 # @fastbackend/express
 
+## 0.2.0
+
+### Minor Changes
+
+- Update the packages and Readme
+
+### Patch Changes
+
+- Updated dependencies
+  - @fastbackend/core@0.2.0
+
 ## 0.1.2
 
 ### Patch Changes
