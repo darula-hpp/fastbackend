@@ -10,7 +10,12 @@ setup(
     description="FastAPI runtime adapter for FastBackend framework",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/darula-hpp/uigen/tree/main/fastbackend",
+    url="https://github.com/darula-hpp/fastbackend",
+    project_urls={
+        "Homepage": "https://github.com/darula-hpp/fastbackend",
+        "Repository": "https://github.com/darula-hpp/fastbackend",
+        "Issues": "https://github.com/darula-hpp/fastbackend/issues",
+    },
     packages=find_packages(),
     classifiers=[
         "Development Status :: 3 - Alpha",

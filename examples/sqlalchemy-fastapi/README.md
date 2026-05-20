@@ -132,4 +132,4 @@ Includes override coverage in `tests/test_overrides.py`.
 ## Notes
 
 - **Persistence:** FastAPI adapter uses an in-memory store (MVP). Data resets when the server restarts.
-- **OpenAPI:** Written to `.fastbackend/openapi.yaml` after `fastbackend generate`. Feed this to UIGen or other OpenAPI tools.
+- **OpenAPI:** Written to `.fastbackend/openapi.yaml` after `fastbackend generate`. Use with [UIGen](https://github.com/darula-hpp/uigen) for a complete frontend, or with Orval and other OpenAPI tooling for typed clients.

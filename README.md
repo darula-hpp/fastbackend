@@ -1,46 +1,23 @@
 # FastBackend
 
-FastBackend automates the repetitive ~90% of backend work: CRUD, relationships, validation, filtering, and OpenAPI from your database schema. You write custom code only for business logic — overrides and custom routes for the 10% that matters.
+FastBackend automates the repetitive ~90% of backend work: CRUD, relationships, validation, filtering, and OpenAPI from your database schema. Your schema compiles to a framework-agnostic **IR**, a **runtime adapter** (FastAPI or Express) serves REST routes in memory, and OpenAPI on disk is the contract for any frontend.
 
-Schema → framework-agnostic **IR** → **runtime adapter** (FastAPI or Express) → REST + OpenAPI. The IR is not tied to a backend framework. The OpenAPI output is not tied to a frontend framework.
+## Demo
+
+<video src="examples/output.mp4" controls width="100%"></video>
 
 ## Vision
 
-Most backend work is predictable once you have a schema. The other part — custom business logic, integrations, auth flows, microservices, and one-off endpoints — is what makes your product unique.
-
-FastBackend's goal is to automate the predictable layer:
-
-1. Your **database schema** is the source of truth
-2. The CLI compiles it into a framework-agnostic **IR** (entities, fields, relationships, validation)
-3. A **runtime adapter** serves that IR as REST + OpenAPI
-4. You write **custom code only where it matters** — overrides and custom routes in `app/custom/` or `src/custom/`
-
-FastBackend ships two runtime adapters today:
+Most backend work is predictable once you have a schema. FastBackend handles that layer so you can focus on business logic: overrides, custom routes, integrations, and one-off endpoints.
 
 | Adapter | Stack | Persistence | Best for |
 |---------|-------|-------------|----------|
 | **FastAPI** | Python | In-memory (MVP) | SQLAlchemy or Prisma schema, Python teams |
 | **Express** | TypeScript | Prisma Client | Prisma schema, Node/TypeScript teams |
 
-`@fastbackend/core` and `@fastbackend/cli` are adapter-agnostic. They parse your schema, write IR and OpenAPI to disk, and the runtime adapter registers routes in memory.
-
-## Frontend integration
-
-`fastbackend generate` writes `.fastbackend/openapi.yaml`. Any frontend can consume it:
-
-- **React / Vue / Svelte / Angular**: Orval, openapi-typescript, Hey API, etc.
-- **[UIGen](https://github.com/darula-hpp/uigen)**: auto-generates a React admin UI from the same OpenAPI file
-
-```bash
-fastbackend generate
-npx orval --input .fastbackend/openapi.yaml --output ./src/api
-```
-
-OpenAPI is the handoff point between backend and frontend.
+`@fastbackend/core` and `@fastbackend/cli` are adapter-agnostic. Custom code lives in `app/custom/` (Python) or `src/custom/` (Express).
 
 ## How It Works
-
-FastBackend uses a **schema-first pipeline**: your database schema is the source of truth, the CLI generates IR and OpenAPI to disk, and the runtime adapter registers REST routes in memory at startup. No ORM boilerplate, no route files to maintain.
 
 ```
 CLI Command
@@ -74,16 +51,30 @@ CLI Command
                                                +----------------+
 ```
 
-**Generate step:** `@fastbackend/core` parses your schema into a framework-agnostic IR (entities, fields, relationships, validation rules), then emits OpenAPI for downstream tools like UIGen.
+1. **`fastbackend generate`** parses your schema into IR and writes `.fastbackend/ir.json` plus `.fastbackend/openapi.yaml`.
+2. **`fastbackend dev`** loads IR, registers CRUD and relationship routes, applies validation (Pydantic or Zod), and mounts custom endpoints.
+3. FastAPI uses an in-memory store today; Express uses Prisma Client against your database.
 
-**Dev step:** The runtime adapter loads IR, wires CRUD and relationship routes, applies validation (Pydantic or Zod), and mounts your custom endpoints. FastAPI uses an in-memory store today; Express uses Prisma Client against your database.
+## Frontend Integration
 
-## Custom code for the 10%
+`fastbackend generate` writes `.fastbackend/openapi.yaml`. **[UIGen](https://github.com/darula-hpp/uigen)** has first-class support: it renders a complete frontend from that spec at runtime, with overrides for custom views when you need them.
 
-Generated routes cover CRUD and relationships. Use custom routes and overrides for business logic:
+```bash
+fastbackend generate
+fastbackend dev   # API at http://localhost:8301
 
-- **Custom route** — add a new endpoint under `app/custom/` or `src/custom/`
-- **Override** — replace a generated route (e.g. custom `GET /users/{id}` handler)
+npx @uigen-dev/cli@latest init my-app --spec .fastbackend/openapi.yaml
+npx @uigen-dev/cli@latest serve openapi.yaml --proxy-base http://localhost:8301
+```
+
+OpenAPI is the contract between backend and frontend. You can also use Orval, openapi-typescript, Hey API, or your own tooling if you prefer typed clients only.
+
+## Custom Routes and Overrides
+
+Generated routes cover CRUD and relationships. For everything else:
+
+- **Custom route**: add a new endpoint under `app/custom/` or `src/custom/`
+- **Override**: replace a generated route (e.g. custom `GET /users/{id}` handler)
 
 The runtime discovers these at startup and merges them into the served API and OpenAPI output. See [examples/sqlalchemy-fastapi](./examples/sqlalchemy-fastapi/) for override examples.
 
@@ -147,9 +138,9 @@ Same philosophy for common backend services: **declare the provider and URLs in 
 
 Planned (not shipped yet):
 
-- **Storage** (S3, etc.) — declarative bucket/region config, credentials in env
-- **OAuth** — declarative provider config, client secrets in env
-- **More runtime adapters** — same IR pipeline, different backend frameworks
+- **Storage** (S3, etc.): declarative bucket/region config, credentials in env
+- **OAuth**: declarative provider config, client secrets in env
+- **More runtime adapters**: same IR pipeline, different backend frameworks
 
 Self-hosted: you bring credentials, FastBackend wires the boilerplate. Custom code remains the escape hatch when declarative config is not enough.
 

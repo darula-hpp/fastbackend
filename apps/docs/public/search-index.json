@@ -4,28 +4,28 @@
     "section": "Getting Started",
     "slug": "introduction",
     "href": "/docs/getting-started/introduction",
-    "content": "Introduction\nFastBackend is a schema-driven backend runtime that transforms database schemas into dynamic REST APIs with OpenAPI specifications.\nIt mirrors UIGen's architecture: routes exist only in memory at runtime. Only IR and OpenAPI are written to disk.\nWhat FastBackend Does\nWhat You Own\nPackages\n- Schema parsing, IR generation, OpenAPI generation\n- Command-line interface\n- Python FastAPI runtime adapter\nExamples\nSQLAlchemy + FastAPI\nPrisma + FastAPI"
+    "content": "Introduction\nFastBackend automates the repetitive ~90% of backend work: CRUD, relationships, validation, filtering, and OpenAPI from your database schema. You write custom code only for business logic — overrides and custom routes for the 10% that matters.\nFastBackend is a backend runtime, not a codegen tool. Your schema compiles to a framework-agnostic IR. A runtime adapter serves REST routes in memory at startup. OpenAPI is written to disk for frontend tools and API consumers.\nRuntime vs codegen\nWhat gets written vs what runs\nWhat you own\nRuntime adapters\n and  are adapter-agnostic.\nFrontend integration\n writes . Any frontend can consume it:\nVue / React / Svelte / Angular: Orval, openapi-typescript, Hey API\nUIGen: React admin UI from the same OpenAPI file\nOpenAPI is the handoff point between backend and frontend.\nPackages\nPublished on npm:\n[](https://www.npmjs.com/package/@fastbackend/core) — schema parsing, IR, OpenAPI\n[](https://www.npmjs.com/package/@fastbackend/cli) — command-line interface\n[](https://www.npmjs.com/package/@fastbackend/express) — Express + Prisma runtime\nPublished on PyPI:\n[](https://pypi.org/project/fastbackend-fastapi/) — FastAPI runtime adapter\nRoadmap\nPlanned (not shipped yet): declarative wiring for storage, OAuth, and other services — provider + URLs in , secrets in . Same philosophy: automate boilerplate, custom code when you need it.\nExamples\nSQLAlchemy + FastAPI\nPrisma + FastAPI\nPrisma + Express"
   },
   {
     "title": "Quick Start",
     "section": "Getting Started",
     "slug": "quick-start",
     "href": "/docs/getting-started/quick-start",
-    "content": "Quick Start\nBuild FastBackend (monorepo dev)\nInstall the Python runtime\nCreate a project\nGenerate and run\nTry the API\nOpen http://localhost:8000/docs for interactive API docs.\nUse the Example Project"
+    "content": "Quick Start\nPublished packages (recommended)\nCreate and run a FastAPI project\nOpen http://localhost:8301/docs for interactive API docs.\nTry the example project\nTry the API\nMonorepo development\nIf you are contributing to FastBackend itself:\nExpress + Prisma\nSee Express Runtime Architecture for details."
   },
   {
     "title": "Installation",
     "section": "Getting Started",
     "slug": "installation",
     "href": "/docs/getting-started/installation",
-    "content": "Installation\nPrerequisites\nNode.js 20+ and pnpm (CLI and core)\nPython 3.10+ (FastAPI adapter)\nSQLAlchemy or Prisma schema\nCLI (published)\nMonorepo development\nUse the local CLI:\nPython runtime (published)\nPython runtime (local development)\nDocker (optional)\nScaffold Docker templates when initializing:\nRun  before building the image so  exists in the container context."
+    "content": "Installation\nPrerequisites\nNode.js 20+ (CLI, core, Express adapter)\nPython 3.10+ (FastAPI adapter only)\nSQLAlchemy or Prisma schema\nCLI (published)\nMonorepo development\nUse the local CLI:\nExpress runtime (published)\nRequires  and a generated Prisma schema in your project.\nExpress runtime (local development)\nPython runtime (published)\nPython runtime (local development)\nChoose an adapter\nDocker (optional)\nScaffold Docker templates when initializing:\nRun  before building the image so  exists in the container context."
   },
   {
     "title": "How It Works",
     "section": "Core Concepts",
     "slug": "how-it-works",
     "href": "/docs/core-concepts/how-it-works",
-    "content": "How It Works\nFastBackend follows a three-stage pipeline:\nStage 1: Schema Parsing\nThe CLI reads your schema file and parses entities, fields, relationships, and enums.\nSupported formats:\nSQLAlchemy ()\nPrisma ()\nStage 2: IR Generation\nThe parser output is normalized into a versioned Intermediate Representation (IR) at .\nOpenAPI is generated from the IR at .\nNo route code is generated. FastBackend does not write CRUD routers to disk.\nStage 3: Runtime\nThe FastAPI adapter reads IR at startup and dynamically registers:\nCRUD routes per entity\nRelationship routes\nCustom endpoints from \nHealth check at \nPydantic models are created at runtime for request validation.\nWatch Mode\nWhen  is enabled in , the CLI watches your schema and config files and re-runs  on change. Uvicorn hot-reload picks up Python changes in custom endpoints."
+    "content": "How It Works\nFastBackend follows a schema-first pipeline. The CLI compiles your schema to IR and OpenAPI. The runtime adapter serves routes in memory — no CRUD route files are generated on disk.\nStage 1: Schema parsing\nThe CLI reads your schema file and parses entities, fields, relationships, and enums.\nSupported formats:\nSQLAlchemy ()\nPrisma ()\nStage 2: IR generation\nThe parser output is normalized into a versioned Intermediate Representation (IR) at .\nOpenAPI is generated from the IR at .\nNo route code is generated. FastBackend does not write CRUD routers to your project. The IR is the contract the runtime reads at startup.\nStage 3: Runtime\nThe runtime adapter reads IR at startup and dynamically registers:\nCRUD routes per entity\nRelationship routes\nCustom endpoints from  or \nHealth check at \nCustom code for the 10%\nGenerated routes cover predictable CRUD and relationships. Use custom routes for new endpoints and overrides to replace generated handlers. See Custom Endpoints.\nWatch mode\nWhen  is enabled in , the CLI watches your schema and config files and re-runs  on change. Hot reload picks up changes in custom endpoint files.\nFrontend handoff\nOpenAPI at  is the stable contract for frontend client generators (Orval, openapi-typescript, etc.) or tools like UIGen."
   },
   {
     "title": "Intermediate Representation",
@@ -39,7 +39,14 @@
     "section": "Core Concepts",
     "slug": "runtime-architecture",
     "href": "/docs/core-concepts/runtime-architecture",
-    "content": "Runtime Architecture\nThe  package reads IR and builds the application at startup.\nEngines\nRoute Registry\nThe runtime tracks which routes were registered and which were overridden by custom code. Overridden paths are skipped during CRUD registration.\nCustom Endpoints\nFiles in  export a FastAPI . The runtime imports each module and calls .\nEntry Point\nDefaults:\nIR path: \nCustom path: \nIn-Memory Store\nThe MVP runtime uses an in-memory store for CRUD operations during development. Production deployments should connect engines to your database layer as adapters evolve."
+    "content": "Runtime Architecture\nThe  package is the Python runtime adapter. It reads IR and builds the application at startup.\nFor the Express + Prisma adapter, see Express Runtime Architecture.\nEngines\nRoute Registry\nThe runtime tracks which routes were registered and which were overridden by custom code. Overridden paths are skipped during CRUD registration.\nCustom Endpoints\nFiles in  export a FastAPI . The runtime imports each module and calls .\nEntry Point\nDefaults:\nIR path: \nCustom path: \nIn-Memory Store\nThe MVP runtime uses an in-memory store for CRUD operations during development. Production deployments should connect engines to your database layer as adapters evolve."
+  },
+  {
+    "title": "Express Runtime",
+    "section": "Core Concepts",
+    "slug": "express-runtime-architecture",
+    "href": "/docs/core-concepts/express-runtime-architecture",
+    "content": "Express Runtime Architecture\nThe  package reads IR and builds an Express app at startup with Prisma-backed persistence.\nEngines\nRoute Registry\nThe runtime tracks which routes were registered and which were overridden by custom code. Overridden paths are skipped during CRUD registration.\nCustom Endpoints\nFiles in  export an Express . The runtime imports each module and mounts it on the app.\nOverrides\nMark a custom handler as an override so runtime CRUD routes are skipped:\nEntry Point\nDefaults:\nIR path: \nCustom path: \nDatabase:  with Prisma Client\nSupported Schema\nExpress requires  in . SQLAlchemy schemas are supported by the FastAPI adapter only."
   },
   {
     "title": "Overview",

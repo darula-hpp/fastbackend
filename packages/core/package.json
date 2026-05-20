@@ -1,16 +1,16 @@
 {
   "name": "@fastbackend/core",
   "version": "0.1.2",
-  "description": "Core schema parsing and IR generation for FastBackend",
+  "description": "Schema parsing, IR generation, and OpenAPI output for FastBackend",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/darula-hpp/uigen.git",
-    "directory": "fastbackend/packages/core"
+    "url": "git+https://github.com/darula-hpp/fastbackend.git",
+    "directory": "packages/core"
   },
-  "homepage": "https://github.com/darula-hpp/uigen/tree/main/fastbackend/packages/core",
+  "homepage": "https://github.com/darula-hpp/fastbackend/tree/main/packages/core#readme",
   "bugs": {
-    "url": "https://github.com/darula-hpp/uigen/issues"
+    "url": "https://github.com/darula-hpp/fastbackend/issues"
   },
   "type": "module",
   "files": [
@@ -56,7 +56,8 @@
     "schema-parser",
     "ir-generator",
     "openapi",
-    "backend-framework"
+    "backend-runtime",
+    "schema-driven"
   ],
   "publishConfig": {
     "access": "public"

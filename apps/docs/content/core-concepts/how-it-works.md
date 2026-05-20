@@ -60,4 +60,4 @@ When `development.watch` is enabled in `fastbackend.yaml`, the CLI watches your 
 
 ## Frontend handoff
 
-OpenAPI at `.fastbackend/openapi.yaml` is the stable contract for frontend client generators (Orval, openapi-typescript, etc.) or tools like UIGen.
+OpenAPI at `.fastbackend/openapi.yaml` is the stable contract for the frontend. **[UIGen](https://github.com/darula-hpp/uigen)** has first-class support: complete UI from the spec at runtime, with overrides for custom views. Orval, openapi-typescript, and similar tools work for typed clients only.

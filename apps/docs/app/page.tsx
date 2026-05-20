@@ -197,7 +197,7 @@ const features = [
     ),
     title: 'Frontend integration',
     description:
-      'OpenAPI output works with Orval, openapi-typescript, Hey API, or UIGen. Any frontend stack can consume the spec.',
+      'OpenAPI output has first-class UIGen support for a complete frontend with overrides. Orval, openapi-typescript, and Hey API work too.',
   },
   {
     icon: () => (

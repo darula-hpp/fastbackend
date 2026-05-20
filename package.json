@@ -6,8 +6,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/darula-hpp/uigen.git",
-    "directory": "fastbackend"
+    "url": "git+https://github.com/darula-hpp/fastbackend.git"
+  },
+  "homepage": "https://github.com/darula-hpp/fastbackend#readme",
+  "bugs": {
+    "url": "https://github.com/darula-hpp/fastbackend/issues"
   },
   "scripts": {
     "build": "pnpm -r build",

@@ -16,7 +16,7 @@ export function VersionBadge() {
 
   return (
     <a
-      href="https://github.com/darula-hpp/uigen/tree/main/fastbackend"
+      href="https://github.com/darula-hpp/fastbackend"
       target="_blank"
       rel="noopener noreferrer"
       className="inline-flex items-center gap-1.5 text-xs text-gray-400 dark:text-gray-500 hover:text-[var(--primary)] transition-colors"

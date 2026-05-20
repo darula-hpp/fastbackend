@@ -39,3 +39,8 @@ htmlcov/
 # Docs site (npm, not pnpm workspace)
 apps/docs/node_modules/
 apps/docs/.next/
+
+# Local marketing drafts (not for the repo)
+web-dev.md
+vue-post.md
+svelte.md

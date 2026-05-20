@@ -21,4 +21,4 @@ async def send_email(user_id: int):
 
 Custom endpoints are registered at runtime alongside generated routes. Re-run `fastbackend generate` to include them in OpenAPI.
 
-See [examples/sqlalchemy-fastapi/app/custom/](https://github.com/darula-hpp/uigen/tree/main/fastbackend/examples/sqlalchemy-fastapi/app/custom) for working examples.
+See [examples/sqlalchemy-fastapi/app/custom/](https://github.com/darula-hpp/fastbackend/tree/main/examples/sqlalchemy-fastapi/app/custom) for working examples.

@@ -5,12 +5,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/darula-hpp/uigen.git",
-    "directory": "fastbackend/packages/express"
+    "url": "git+https://github.com/darula-hpp/fastbackend.git",
+    "directory": "packages/express"
   },
-  "homepage": "https://github.com/darula-hpp/uigen/tree/main/fastbackend/packages/express",
+  "homepage": "https://github.com/darula-hpp/fastbackend/tree/main/packages/express#readme",
   "bugs": {
-    "url": "https://github.com/darula-hpp/uigen/issues"
+    "url": "https://github.com/darula-hpp/fastbackend/issues"
   },
   "type": "module",
   "files": [
@@ -64,7 +64,8 @@
     "fastbackend",
     "express",
     "prisma",
-    "backend-framework",
+    "backend-runtime",
+    "schema-driven",
     "runtime"
   ],
   "publishConfig": {

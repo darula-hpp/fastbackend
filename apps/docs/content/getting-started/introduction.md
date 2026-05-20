@@ -48,12 +48,17 @@ Schema → IR → runtime adapter → live REST + OpenAPI
 
 ## Frontend integration
 
-`fastbackend generate` writes `.fastbackend/openapi.yaml`. Any frontend can consume it:
+`fastbackend generate` writes `.fastbackend/openapi.yaml`. **[UIGen](https://github.com/darula-hpp/uigen)** has first-class support: it renders a complete frontend from that spec at runtime, with overrides for custom views when you need them.
 
-- **Vue / React / Svelte / Angular**: Orval, openapi-typescript, Hey API
-- **[UIGen](https://github.com/darula-hpp/uigen)**: React admin UI from the same OpenAPI file
+```bash
+fastbackend generate
+fastbackend dev
 
-OpenAPI is the handoff point between backend and frontend.
+npx @uigen-dev/cli@latest init my-app --spec .fastbackend/openapi.yaml
+npx @uigen-dev/cli@latest serve openapi.yaml --proxy-base http://localhost:8301
+```
+
+OpenAPI is the contract between backend and frontend. Orval, openapi-typescript, and Hey API work too if you only need typed clients.
 
 ## Packages
 

@@ -1,16 +1,16 @@
 {
   "name": "@fastbackend/cli",
   "version": "0.1.2",
-  "description": "CLI tool for FastBackend framework",
+  "description": "CLI for the FastBackend schema-driven backend runtime",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/darula-hpp/uigen.git",
-    "directory": "fastbackend/packages/cli"
+    "url": "git+https://github.com/darula-hpp/fastbackend.git",
+    "directory": "packages/cli"
   },
-  "homepage": "https://github.com/darula-hpp/uigen/tree/main/fastbackend/packages/cli",
+  "homepage": "https://github.com/darula-hpp/fastbackend/tree/main/packages/cli#readme",
   "bugs": {
-    "url": "https://github.com/darula-hpp/uigen/issues"
+    "url": "https://github.com/darula-hpp/fastbackend/issues"
   },
   "type": "module",
   "bin": {
@@ -46,8 +46,9 @@
   "keywords": [
     "fastbackend",
     "cli",
-    "backend-framework",
-    "code-generator"
+    "backend-runtime",
+    "schema-driven",
+    "openapi"
   ],
   "publishConfig": {
     "access": "public"
